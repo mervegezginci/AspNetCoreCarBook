@@ -1,0 +1,67 @@
+@model List<CarBook.Dto.CarFeatureDtos.ResultCarFeatureByCarIdDto>
+
+@{
+    ViewData["Title"] = "Araç Özellikleri";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+    int count = 0;
+}
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div>
+                                <h4 class="card-title">Araca Ait Özellikler</h4>
+                                <p class="card-subtitle mb-0">
+                                    Araç özellikleri tablosu ve durum yönetimi
+                                </p>
+                            </div>
+                            <a href="/Admin/AdminCarFeatureDetail/CreateFeatureByCarID?id=@ViewBag.CarID" class="btn btn-primary" style="background-color: #6c5ce7; border-color: #6c5ce7;">
+                                Özellikleri Yeniden Tanımla
+                            </a>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Özellik Adı</th>
+                                        <th>Durum</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        count++;
+                                        <tr>
+                                            <th>@count</th>
+                                            <td>@item.FeatureName</td>
+                                            <td>
+                                                @if (item.Available)
+                                                {
+                                                    <span class="badge badge-success">Mevcut</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge badge-danger">Mevcut Değil</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="mt-4">
+                            <a href="/AdminCar/Index" class="btn btn-secondary">Araç Listesine Dön</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,4 +1,4 @@
-﻿@model CreateCarDto
+@model CreateCarDto
 @{
     ViewData["Title"] = "CreateCar";
     Layout = "~/Views/AdminLayout/Index.cshtml";
@@ -12,48 +12,66 @@
                     <div class="card-body">
                         <h4 class="card-title">Yeni Araç Girişi</h4>
                         <p class="card-subtitle mb-4">Araç ile ilgili temel bilgileri eksiksiz doldurmanız önemlidir. Veri girişlerinden sonra kaydet butonuna tıklayarak işlemi tamamlayabilirsiniz.</p>
+                        @if (TempData["ErrorMessage"] != null)
+                        {
+                            <div class="alert alert-danger">
+                                @TempData["ErrorMessage"]
+                            </div>
+                        }
+
                         <form method="post">
-                            <div class="form-group">
-                                <label for="exampleInputBrand">Marka</label>
-                                @Html.DropDownListFor(x => x.BrandID, (List<SelectListItem>)ViewBag.BrandValues, new { @class = "form-control" })
+                            <div class="form-group mb-3">
+                                <label for="exampleInputBrand">Marka <span class="text-danger">*</span></label>
+                                @Html.DropDownListFor(x => x.BrandID, (List<SelectListItem>)ViewBag.BrandValues, "Lütfen Marka Seçiniz", new { @class = "form-control", @required = "required" })
+                                <span asp-validation-for="BrandID" class="text-danger small font-size-12 mt-1 d-block"></span>
                             </div>
-                            <div class="form-group">
-                                <label for="exampleInputModel">Model</label>
-                                <input type="text" class="form-control" id="exampleInputModel" asp-for="Model" placeholder="Model Girişi Yapınız">
+                            <div class="form-group mb-3">
+                                <label for="exampleInputModel">Model <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="exampleInputModel" asp-for="Model" placeholder="Model Girişi Yapınız" required>
+                                <span asp-validation-for="Model" class="text-danger small font-size-12 mt-1 d-block"></span>
                             </div>
-                            <div class="form-group">
-                                <label for="exampleInputCoverImage">Kapak Fotoğrafı</label>
-                                <input type="text" class="form-control" id="exampleInputCoverImage" asp-for="CoverImageUrl" placeholder="Kapak Fotoğraf Linkini Giriniz">
+                            <div class="form-group mb-3">
+                                <label for="exampleInputCoverImage">Kapak Fotoğrafı <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="exampleInputCoverImage" asp-for="CoverImageUrl" placeholder="Kapak Fotoğraf Linkini Giriniz" required>
+                                <span asp-validation-for="CoverImageUrl" class="text-danger small font-size-12 mt-1 d-block"></span>
                             </div>
-                            <div class="form-group">
-                                <label for="exampleInputKm">Km</label>
+                            <div class="form-group mb-3">
+                                <label for="exampleInputKm">Km <span class="text-danger">*</span></label>
                                 <input type="number" class="form-control"
                                        id="exampleInputKm"
                                        asp-for="Km"
                                        min="0"
-                                       placeholder="Km Bilgisi Giriniz">
+                                       placeholder="Km Bilgisi Giriniz"
+                                       required>
+                                <span asp-validation-for="Km" class="text-danger small font-size-12 mt-1 d-block"></span>
                             </div>
-                            <div class="form-group">
-                                <label for="exampleInputTransmission">Vites Türü</label>
-                                <input type="text" class="form-control" id="exampleInputTransmission" asp-for="Transmission" placeholder="Vites Türünü Yazınız">
+                            <div class="form-group mb-3">
+                                <label for="exampleInputTransmission">Vites Türü <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="exampleInputTransmission" asp-for="Transmission" placeholder="Örn: Otomatik / Manuel" required>
+                                <span asp-validation-for="Transmission" class="text-danger small font-size-12 mt-1 d-block"></span>
                             </div>
-                            <div class="form-group">
-                                <label for="exampleInputSeat">Koltuk Sayısı</label>
-                                <input type="number" class="form-control" id="exampleInputSeat" asp-for="Seat" placeholder="Koltuk Sayısını Seçiniz">
+                            <div class="form-group mb-3">
+                                <label for="exampleInputSeat">Koltuk Sayısı <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="exampleInputSeat" asp-for="Seat" min="1" placeholder="Koltuk Sayısını Giriniz" required>
+                                <span asp-validation-for="Seat" class="text-danger small font-size-12 mt-1 d-block"></span>
                             </div>
-                            <div class="form-group">
-                                <label for="exampleInputLuggage">Bagaj Sayısı</label>
-                                <input type="number" class="form-control" id="exampleInputLuggage" asp-for="Luggage" placeholder="Bagaj Sayısını Giriniz">
+                            <div class="form-group mb-3">
+                                <label for="exampleInputLuggage">Bagaj Sayısı <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="exampleInputLuggage" asp-for="Luggage" min="0" placeholder="Bagaj Sayısını Giriniz" required>
+                                <span asp-validation-for="Luggage" class="text-danger small font-size-12 mt-1 d-block"></span>
                             </div>
-                            <div class="form-group">
-                                <label for="exampleInputFuel">Yakıt Türü</label>
-                                <input type="text" class="form-control" id="exampleInputFuel" asp-for="Fuel" placeholder="Yakıt Türünü Giriniz">
+                            <div class="form-group mb-3">
+                                <label for="exampleInputFuel">Yakıt Türü <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="exampleInputFuel" asp-for="Fuel" placeholder="Örn: Benzin / Dizel / Hibrit" required>
+                                <span asp-validation-for="Fuel" class="text-danger small font-size-12 mt-1 d-block"></span>
                             </div>
-                            <div class="form-group">
-                                <label for="exampleInputLuggage">Büyük Kapak Fotoğrafı</label>
-                                <input type="text" class="form-control" id="exampleInputLuggage" asp-for="BigImageUrl" placeholder="Araç Detayında Gözükecek Kapak Fotoğraf Linki">
+                            <div class="form-group mb-4">
+                                <label for="exampleInputBigImage">Büyük Kapak Fotoğrafı <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="exampleInputBigImage" asp-for="BigImageUrl" placeholder="Araç Detayında Gözükecek Kapak Fotoğraf Linki" required>
+                                <span asp-validation-for="BigImageUrl" class="text-danger small font-size-12 mt-1 d-block"></span>
                             </div>
-                            <button type="submit" class="btn btn-primary waves-effect waves-light">Aracı Kaydet</button>
+                            <button type="submit" class="btn btn-primary waves-effect waves-light px-4">Aracı Kaydet</button>
+                            <a href="/AdminCar/Index" class="btn btn-light waves-effect ml-2">İptal</a>
                         </form>
 
                     </div> 

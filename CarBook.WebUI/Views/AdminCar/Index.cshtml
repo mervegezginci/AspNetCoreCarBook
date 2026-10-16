@@ -1,4 +1,4 @@
-﻿@using CarBook.Dto.CarDtos
+@using CarBook.Dto.CarDtos
 @model List<ResultCarWithBrandsDto>
 
 @{
@@ -38,6 +38,7 @@
                                         <th>Yakıt</th>
                                         <th>Koltuk</th>
                                         <th>Bagaj</th>
+                                        <th>Özellik Ata</th>
                                         <th>Güncelle</th>
                                         <th>Sil</th>
                                     </tr>
@@ -55,6 +56,13 @@
                                             <td>@item.Fuel</td>
                                             <td>@item.Seat</td>
                                             <td>@item.Luggage</td>
+
+                                            <td>
+                                                <a href="/Admin/AdminCarFeatureDetail/CreateFeatureByCarID?id=@item.CarId"
+                                                   class="btn btn-info">
+                                                    Özellik Ata
+                                                </a>
+                                            </td>
 
                                             <td>
                                                 <a href="/AdminCar/UpdateCar/@item.CarId"
