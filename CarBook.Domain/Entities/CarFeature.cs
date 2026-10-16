@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -8,9 +8,9 @@ namespace CarBook.Domain.Entities
     {
         public int CarFeatureId { get; set; }
         public int CarID { get; set; }
-        public Car Car { get; set; }
+        public Car? Car { get; set; }
         public int FeatureID { get; set; }
-        public Feature Feature { get; set; }
+        public Feature? Feature { get; set; }
         public bool Available { get; set; }
     }
 }

@@ -1,0 +1,79 @@
+@model List<CarBook.Dto.FeatureDtos.ResultFeatureDto>
+
+@{
+    ViewData["Title"] = "CreateFeatureByCarID";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+    var assignedIds = (List<int>)(ViewBag.AssignedFeatureIds ?? new List<int>());
+    int currentCarId = ViewBag.CarID != null ? (int)ViewBag.CarID : 0;
+}
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Araca Ait Özellikler Ekleme Sayfası</h4>
+                        <p class="card-subtitle mb-4">
+                            Araca ait özellik tanımlaması yapılacak sayfadır.
+                        </p>
+
+                        @if (TempData["ErrorMessage"] != null)
+                        {
+                            <div class="alert alert-danger">
+                                @TempData["ErrorMessage"]
+                            </div>
+                        }
+
+                        <form method="post" action="/Admin/AdminCarFeatureDetail/CreateFeatureByCarID">
+                            @if (currentCarId > 0)
+                            {
+                                <input type="hidden" name="carId" value="@currentCarId" />
+                                <div class="mb-3">
+                                    <span class="badge badge-soft-primary p-2 font-size-14">
+                                        <i class="mdi mdi-car"></i> Seçili Araç: <strong>@ViewBag.SelectedCarName</strong>
+                                    </span>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="form-group mb-4 col-md-6 px-0">
+                                    <label for="carIdSelect">Özellik Tanımlanacak Aracı Seçiniz</label>
+                                    @Html.DropDownList("carId", (List<SelectListItem>)ViewBag.CarList, "Araç Seçiniz", new { @class = "form-control", @id = "carIdSelect", @required = "required" })
+                                </div>
+                            }
+
+                            <div class="feature-checkbox-list mt-3">
+                                @foreach (var item in Model)
+                                {
+                                    bool isChecked = assignedIds.Contains(item.FeatureID);
+                                    <div class="custom-control custom-checkbox mb-2">
+                                        <input type="checkbox"
+                                               class="custom-control-input"
+                                               id="feature_@item.FeatureID"
+                                               name="selectedFeatures"
+                                               value="@item.FeatureID"
+                                               @(isChecked ? "checked" : "") />
+                                        <label class="custom-control-label" for="feature_@item.FeatureID" style="cursor: pointer; font-weight: 500;">
+                                            @item.Name
+                                        </label>
+                                    </div>
+                                }
+                            </div>
+
+                            <div class="mt-4">
+                                <button type="submit"
+                                        class="btn btn-primary waves-effect waves-light px-4 py-2"
+                                        style="background-color: #6c5ce7; border-color: #6c5ce7;">
+                                    Araca Özellikleri Ata
+                                </button>
+                                <a href="/AdminCar/Index" class="btn btn-light waves-effect ml-2">Geri Dön</a>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

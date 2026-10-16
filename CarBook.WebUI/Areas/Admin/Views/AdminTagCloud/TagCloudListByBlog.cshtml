@@ -1,0 +1,92 @@
+@model List<string>
+
+@{
+    ViewData["Title"] = "TagCloudListByBlog";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+    var assignedTags = (List<string>)(ViewBag.AssignedTags ?? new List<string>());
+    int currentBlogId = ViewBag.BlogID != null ? (int)ViewBag.BlogID : 0;
+}
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div>
+                                <h4 class="card-title">Bloga Ait Etiketler Ekleme Sayfası</h4>
+                                <p class="card-subtitle mb-0">
+                                    Bloga ait etiket tanımlaması yapılacak sayfadır.
+                                </p>
+                            </div>
+                            <a href="/Admin/AdminTagCloud/Index" class="btn btn-outline-primary">
+                                <i class="fas fa-tags mr-1"></i> Etiket Sayfasına Git
+                            </a>
+                        </div>
+
+                        @if (TempData["SuccessMessage"] != null)
+                        {
+                            <div class="alert alert-success">
+                                @TempData["SuccessMessage"]
+                            </div>
+                        }
+
+                        @if (TempData["ErrorMessage"] != null)
+                        {
+                            <div class="alert alert-danger">
+                                @TempData["ErrorMessage"]
+                            </div>
+                        }
+
+                        <form method="post" action="/Admin/AdminTagCloud/TagCloudListByBlog">
+                            <input type="hidden" name="blogId" value="@currentBlogId" />
+
+                            <div class="mb-3">
+                                <span class="badge badge-soft-primary p-2 font-size-14">
+                                    <i class="fas fa-book-open"></i> Seçili Blog: <strong>@ViewBag.BlogTitle</strong>
+                                </span>
+                            </div>
+
+                            <div class="feature-checkbox-list mt-4">
+                                <label class="font-weight-bold mb-3 d-block">Mevcut Etiketlerden Seçiniz:</label>
+                                <div class="row">
+                                    @for (int i = 0; i < Model.Count; i++)
+                                    {
+                                        var tag = Model[i];
+                                        bool isChecked = assignedTags.Any(x => string.Equals(x, tag, StringComparison.OrdinalIgnoreCase));
+                                        <div class="col-md-3 col-sm-6 mb-2">
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox"
+                                                       class="custom-control-input"
+                                                       id="tag_@i"
+                                                       name="selectedTags"
+                                                       value="@tag"
+                                                       @(isChecked ? "checked" : "") />
+                                                <label class="custom-control-label" for="tag_@i" style="cursor: pointer; font-weight: 500;">
+                                                    @tag
+                                                </label>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+
+
+
+                            <div class="mt-4">
+                                <button type="submit"
+                                        class="btn btn-primary waves-effect waves-light px-4 py-2"
+                                        style="background-color: #6c5ce7; border-color: #6c5ce7;">
+                                    Bloga Etiketleri Ata
+                                </button>
+                                <a href="/Admin/AdminBlog/Index" class="btn btn-light waves-effect ml-2">Geri Dön</a>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

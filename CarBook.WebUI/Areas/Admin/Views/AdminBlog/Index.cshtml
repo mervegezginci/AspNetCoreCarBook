@@ -1,4 +1,4 @@
-﻿@model List<ResultAllBlogsWithAuthorDto>
+@model List<ResultAllBlogsWithAuthorDto>
 
 @{
     ViewData["Title"] = "Index";
@@ -41,6 +41,7 @@
                                         <th>Güncelle</th>
                                         <th>Blogu Aç</th>
                                         <th>Yorumlar</th>
+                                        <th>Etiketler</th>
                                     </tr>
                                 </thead>
 
@@ -86,6 +87,13 @@
                                                 <a href="/Admin/AdminComment/CommentListByBlog/@item.BlogID"
                                                    class="btn btn-outline-warning">
                                                     Yorumlar
+                                                </a>
+                                            </td>
+
+                                            <td>
+                                                <a href="/Admin/AdminTagCloud/TagCloudListByBlog/@item.BlogID"
+                                                   class="btn btn-outline-info">
+                                                    Etiketler
                                                 </a>
                                             </td>
                                         </tr>

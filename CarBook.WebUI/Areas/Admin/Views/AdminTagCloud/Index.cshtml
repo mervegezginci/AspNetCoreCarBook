@@ -1,0 +1,110 @@
+@model List<CarBook.Dto.TagCloudDtos.ResultTagCloudDto>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+    int count = 0;
+}
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+
+                        @if (ViewBag.BlogID != null)
+                        {
+                            <h4 class="card-title">
+                                @if (ViewBag.BlogTitle != null)
+                                {
+                                    <span>"@ViewBag.BlogTitle" Bloguna Ait Etiketler</span>
+                                }
+                                else
+                                {
+                                    <span>Bloga Ait Etiketler (Blog #@ViewBag.BlogID)</span>
+                                }
+                            </h4>
+
+                            <p class="card-subtitle mb-4">
+                                Seçilen blog yazısına ait etiketlerin listelendiği ve yönetildiği sayfadır.
+                            </p>
+
+                            <div class="d-flex justify-content-end mb-3">
+                                <a href="/Admin/AdminTagCloud/CreateTagCloud/@ViewBag.BlogID" class="btn btn-outline-primary mr-2">
+                                    Bu Bloga Etiket Ekle
+                                </a>
+                                <a href="/Admin/AdminBlog/Index" class="btn btn-outline-secondary">
+                                    Blog Listesine Dön
+                                </a>
+                            </div>
+                        }
+                        else
+                        {
+                            <h4 class="card-title">Etiket Bulutu Listesi</h4>
+
+                            <p class="card-subtitle mb-4">
+                                Blog yazılarına ait etiketlerle ilgili işlemlerin gerçekleştirileceği sayfadır. Etiket girişi yaparken bilgileri eksiksiz girmeye özen gösterelim.
+                            </p>
+
+                            <div class="d-flex justify-content-end mb-3">
+                                <a href="/Admin/AdminTagCloud/CreateTagCloud" class="btn btn-primary">
+                                    Yeni Etiket Girişi
+                                </a>
+                            </div>
+                        }
+
+                        <div class="table-responsive">
+                            <table class="table mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Etiket Başlığı</th>
+                                        <th>Blog ID</th>
+                                        <th>Sil</th>
+                                        <th>Güncelle</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model != null && Model.Any())
+                                    {
+                                        foreach (var item in Model)
+                                        {
+                                            count++;
+                                            <tr>
+                                                <td>@count</td>
+                                                <td>@item.Title</td>
+                                                <td>@item.BlogID</td>
+                                                <td>
+                                                    <a href="/Admin/AdminTagCloud/RemoveTagCloud/@item.TagCloudID?blogId=@(ViewBag.BlogID ?? item.BlogID)"
+                                                       class="btn btn-outline-danger">
+                                                        Sil
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <a href="/Admin/AdminTagCloud/UpdateTagCloud/@item.TagCloudID"
+                                                       class="btn btn-outline-success">
+                                                        Güncelle
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="5" class="text-center py-4 text-muted">
+                                                Henüz bu bloga ait bir etiket tanımlanmamış.
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
