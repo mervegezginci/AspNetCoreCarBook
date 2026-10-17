@@ -39,6 +39,37 @@ namespace CarBook.WebApi.Controllers
             return Ok(values);
         }
 
+        [HttpGet("GetCarPricingWithTimePeriodList")]
+        public async Task<IActionResult> GetCarPricingWithTimePeriodList()
+        {
+            var values = await _context.CarPricings
+                .Include(x => x.Car)
+                .ThenInclude(x => x.Brand)
+                .Include(x => x.Pricing)
+                .ToListAsync();
+
+            var grouped = values
+                .GroupBy(x => new
+                {
+                    x.CarID,
+                    BrandName = x.Car != null && x.Car.Brand != null ? x.Car.Brand.Name : "",
+                    Model = x.Car != null ? x.Car.Model : "",
+                    CoverImageUrl = x.Car != null ? x.Car.CoverImageUrl : ""
+                })
+                .Select(g => new
+                {
+                    Model = g.Key.Model,
+                    Brand = g.Key.BrandName,
+                    CoverImageUrl = g.Key.CoverImageUrl,
+                    DailyAmount = g.FirstOrDefault(x => x.Pricing != null && (x.Pricing.Name.Contains("Günlük") || x.PricingID == 1 || x.PricingID == 2))?.Amount ?? 0,
+                    WeeklyAmount = g.FirstOrDefault(x => x.Pricing != null && (x.Pricing.Name.Contains("Haftalık") || x.PricingID == 3))?.Amount ?? 0,
+                    MonthlyAmount = g.FirstOrDefault(x => x.Pricing != null && (x.Pricing.Name.Contains("Aylık") || x.PricingID == 4))?.Amount ?? 0
+                })
+                .ToList();
+
+            return Ok(grouped);
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCarPricing(int id)
         {

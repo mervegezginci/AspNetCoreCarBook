@@ -1,9 +1,16 @@
-﻿<!-- jQuery  -->
+<!-- jQuery  -->
 <script src="/Admin/vertical/assets/js/jquery.min.js"></script>
 <script src="/Admin/vertical/assets/js/bootstrap.bundle.min.js"></script>
 <script src="/Admin/vertical/assets/js/metismenu.min.js"></script>
 <script src="/Admin/vertical/assets/js/waves.js"></script>
 <script src="/Admin/vertical/assets/js/simplebar.min.js"></script>
+
+<!-- Morris Js-->
+<script src="/Admin/plugins/morris-js/morris.min.js"></script>
+<!-- Raphael Js-->
+<script src="/Admin/plugins/raphael/raphael.min.js"></script>
+<!-- Morris Custom Js-->
+<script src="/Admin/vertical/assets/pages/dashboard-demo.js"></script>
 
 <!-- App js -->
 <script src="/Admin/vertical/assets/js/theme.js"></script>
@@ -86,4 +93,65 @@
         .catch(function (err) {
             console.error("SignalR bağlantı hatası:", err);
         });
+</script>
+
+<!-- Otomatik Breadcrumb (Sayfa Yolu) Scripti -->
+<script>
+    $(function () {
+        if ($('.page-title-box').length === 0 && $('.container-fluid').length > 0) {
+            var currentPath = window.location.pathname.toLowerCase();
+            var pageTitle = "Yönetim Paneli";
+
+            var titleMap = {
+                'dashboard': 'Dashboard',
+                'adminstatistics': 'İstatistikler',
+                'admincar': 'Araba İşlemleri',
+                'adminfeature': 'Araba Özellikleri',
+                'adminbrand': 'Markalar',
+                'adminbanner': 'Banner Alanı',
+                'adminabout': 'Hakkımızda',
+                'adminauthor': 'Yazar İşlemleri',
+                'admincategory': 'Blog Kategorileri',
+                'adminblog': 'Blog İşlemleri',
+                'adminpricing': 'Ödeme Türleri',
+                'admincomment': 'Yorumlar',
+                'admincontact': 'İletişim',
+                'adminfooteraddress': 'Alt Adres',
+                'adminlocation': 'Lokasyonlar',
+                'adminservice': 'Hizmetler',
+                'adminsocialmedia': 'Sosyal Medya',
+                'admintestimonial': 'Referanslar',
+                'admintagcloud': 'Etiket Bulutu',
+                'admincarfeaturedetail': 'Özellik Atama'
+            };
+
+            for (var key in titleMap) {
+                if (currentPath.indexOf(key) !== -1) {
+                    pageTitle = titleMap[key];
+                    break;
+                }
+            }
+
+            var cardTitle = $('.card-title').first().text().trim();
+            var displayTitle = (cardTitle && cardTitle.length < 40) ? cardTitle : pageTitle;
+
+            var breadcrumbHtml = `
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title-box d-flex align-items-center justify-content-between pb-3">
+                            <h4 class="mb-0 font-size-18">${displayTitle}</h4>
+                            <div class="page-title-right">
+                                <ol class="breadcrumb m-0">
+                                    <li class="breadcrumb-item"><a href="/Admin/Dashboard/Index">CarBook</a></li>
+                                    <li class="breadcrumb-item active">${pageTitle}</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            $('.container-fluid').first().prepend(breadcrumbHtml);
+        }
+    });
 </script>
