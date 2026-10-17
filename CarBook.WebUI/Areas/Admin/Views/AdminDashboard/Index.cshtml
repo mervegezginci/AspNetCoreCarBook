@@ -1,0 +1,36 @@
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+<div class="page-content">
+    <div class="container-fluid">
+
+        <!-- start page title -->
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box d-flex align-items-center justify-content-between pb-3">
+                    <h4 class="mb-0 font-size-18">Dashboard</h4>
+                    <div class="page-title-right">
+                        <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item"><a href="/Admin/Dashboard/Index">CarBook</a></li>
+                            <li class="breadcrumb-item active">Dashboard</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end page title -->
+
+        @await Component.InvokeAsync("_AdminDashboardStatisticsComponentPartial")
+        <div class="row">
+            @await Component.InvokeAsync("_AdminDashboardChart2ComponentPartial")
+            @await Component.InvokeAsync("_AdminDashboardChart1ComponentPartial")
+            @await Component.InvokeAsync("_AdminDashboardChart3ComponentPartial")
+        </div>
+        <div class="row">
+            @await Component.InvokeAsync("_AdminDashboardCarPricingListComponentPartial")
+            @await Component.InvokeAsync("_AdminDashboardBlogListComponentPartial")
+        </div>
+    </div>
+</div>
