@@ -23,6 +23,19 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
+using CarBook.Application.Interfaces.StatisticsInterfaces;
+using CarBook.Persistence.Repositories.StatisticsRepositories;
+using CarBook.Application.Interfaces.CarPricingInterfaces;
+using CarBook.Persistence.Repositories.CarPricingRepositories;
+using CarBook.Application.Interfaces.ReviewInterfaces;
+using CarBook.Persistence.Repositories.ReviewRepositories;
+using CarBook.Application.Interfaces.CarDescriptionInterfaces;
+using CarBook.Persistence.Repositories.CarDescriptionRepositories;
+using CarBook.Application.Interfaces.RentACarInterfaces;
+using CarBook.Persistence.Repositories.RentACarRepositories;
+using CarBook.Application.Interfaces.CarFeatureInterfaces;
+using CarBook.Persistence.Repositories.CarFeatureRepositories;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCors(options =>
@@ -43,6 +56,12 @@ builder.Services.AddScoped(typeof(ICarRepository), typeof(CarRepository));
 builder.Services.AddScoped(typeof(IBlogRepository), typeof(BlogRepository));
 builder.Services.AddScoped(typeof(ITagCloudRepository), typeof(TagCloudRepository));
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(CommentRepository<>));
+builder.Services.AddScoped<IStatisticsRepository, StatisticsRepository>();
+builder.Services.AddScoped<ICarPricingRepository, CarPricingRepository>();
+builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
+builder.Services.AddScoped<ICarDescriptionRepository, CarDescriptionRepository>();
+builder.Services.AddScoped<IRentACarRepository, RentACarRepository>();
+builder.Services.AddScoped<ICarFeatureRepository, CarFeatureRepository>();
 
 // About Handlers
 builder.Services.AddScoped<GetAboutQueryHandler>();

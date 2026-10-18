@@ -1,4 +1,4 @@
-﻿using CarBook.Application.Features.Mediator.Queries.BlogQueries;
+using CarBook.Application.Features.Mediator.Queries.BlogQueries;
 using CarBook.Application.Features.Mediator.Results.BlogResults;
 using CarBook.Application.Interfaces.BlogInterfaces;
 using MediatR;
@@ -21,7 +21,7 @@ namespace CarBook.Application.Features.Mediator.Handlers.BlogHandlers
             return values.Select(x => new GetLast3BlogsWithAuthorsQueryResult
             {
                 AuthorID = x.AuthorId,
-                BlogID = x.BlogId,
+                BlogID = x.BlogID,
                 CategoryID = x.CategoryId,
                 CoverImageUrl = x.CoverImageUrl,
                 CreatedDate = x.CreatedDate,

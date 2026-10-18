@@ -1,7 +1,7 @@
 @model List<CarBook.Dto.TagCloudDtos.ResultTagCloudDto>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Tüm Etiketler";
     Layout = "~/Views/AdminLayout/Index.cshtml";
     int count = 0;
 }
@@ -41,15 +41,15 @@
                         }
                         else
                         {
-                            <h4 class="card-title">Etiket Bulutu Listesi</h4>
+                            <h4 class="card-title">Tüm Etiketler</h4>
 
                             <p class="card-subtitle mb-4">
-                                Blog yazılarına ait etiketlerle ilgili işlemlerin gerçekleştirileceği sayfadır. Etiket girişi yaparken bilgileri eksiksiz girmeye özen gösterelim.
+                                Sistemde yer alan tüm etiketlerin listelendiği alandır.
                             </p>
 
                             <div class="d-flex justify-content-end mb-3">
                                 <a href="/Admin/AdminTagCloud/CreateTagCloud" class="btn btn-primary">
-                                    Yeni Etiket Girişi
+                                    <i class="mdi mdi-plus mr-1"></i> Yeni Etiket Girişi
                                 </a>
                             </div>
                         }
@@ -60,7 +60,6 @@
                                     <tr>
                                         <th>#</th>
                                         <th>Etiket Başlığı</th>
-                                        <th>Blog ID</th>
                                         <th>Sil</th>
                                         <th>Güncelle</th>
                                     </tr>
@@ -74,9 +73,9 @@
                                             <tr>
                                                 <td>@count</td>
                                                 <td>@item.Title</td>
-                                                <td>@item.BlogID</td>
                                                 <td>
-                                                    <a href="/Admin/AdminTagCloud/RemoveTagCloud/@item.TagCloudID?blogId=@(ViewBag.BlogID ?? item.BlogID)"
+                                                    <a href="/Admin/AdminTagCloud/RemoveTagCloud/@item.TagCloudID?title=@Uri.EscapeDataString(item.Title)"
+                                                       onclick="return confirm('Bu etiketi silmek istediğinize emin misiniz?');"
                                                        class="btn btn-outline-danger">
                                                         Sil
                                                     </a>
@@ -93,8 +92,8 @@
                                     else
                                     {
                                         <tr>
-                                            <td colspan="5" class="text-center py-4 text-muted">
-                                                Henüz bu bloga ait bir etiket tanımlanmamış.
+                                            <td colspan="4" class="text-center py-4 text-muted">
+                                                Henüz tanımlanmış bir etiket bulunmamaktadır.
                                             </td>
                                         </tr>
                                     }

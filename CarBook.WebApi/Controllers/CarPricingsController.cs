@@ -1,5 +1,7 @@
+using CarBook.Application.Features.Mediator.Queries.CarPricingQueries;
 using CarBook.Domain.Entities;
 using CarBook.Persistence.Context;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,10 +12,12 @@ namespace CarBook.WebApi.Controllers
     public class CarPricingsController : ControllerBase
     {
         private readonly CarBookContext _context;
+        private readonly IMediator _mediator;
 
-        public CarPricingsController(CarBookContext context)
+        public CarPricingsController(CarBookContext context, IMediator mediator)
         {
             _context = context;
+            _mediator = mediator;
         }
 
         [HttpGet]
@@ -42,13 +46,23 @@ namespace CarBook.WebApi.Controllers
         [HttpGet("GetCarPricingWithTimePeriodList")]
         public async Task<IActionResult> GetCarPricingWithTimePeriodList()
         {
-            var values = await _context.CarPricings
+            try
+            {
+                var values = await _mediator.Send(new GetCarPricingWithTimePeriodQuery());
+                if (values != null && values.Any())
+                {
+                    return Ok(values);
+                }
+            }
+            catch { }
+
+            var list = await _context.CarPricings
                 .Include(x => x.Car)
                 .ThenInclude(x => x.Brand)
                 .Include(x => x.Pricing)
                 .ToListAsync();
 
-            var grouped = values
+            var grouped = list
                 .GroupBy(x => new
                 {
                     x.CarID,
@@ -58,12 +72,13 @@ namespace CarBook.WebApi.Controllers
                 })
                 .Select(g => new
                 {
+                    CarID = g.Key.CarID,
                     Model = g.Key.Model,
                     Brand = g.Key.BrandName,
                     CoverImageUrl = g.Key.CoverImageUrl,
-                    DailyAmount = g.FirstOrDefault(x => x.Pricing != null && (x.Pricing.Name.Contains("Günlük") || x.PricingID == 1 || x.PricingID == 2))?.Amount ?? 0,
-                    WeeklyAmount = g.FirstOrDefault(x => x.Pricing != null && (x.Pricing.Name.Contains("Haftalık") || x.PricingID == 3))?.Amount ?? 0,
-                    MonthlyAmount = g.FirstOrDefault(x => x.Pricing != null && (x.Pricing.Name.Contains("Aylık") || x.PricingID == 4))?.Amount ?? 0
+                    DailyAmount = g.FirstOrDefault(x => x.Pricing != null && x.Pricing.Name.Contains("Günlük"))?.Amount ?? g.FirstOrDefault(x => x.PricingID == 1)?.Amount ?? 0,
+                    WeeklyAmount = g.FirstOrDefault(x => x.Pricing != null && x.Pricing.Name.Contains("Haftalık"))?.Amount ?? g.FirstOrDefault(x => x.PricingID == 2)?.Amount ?? 0,
+                    MonthlyAmount = g.FirstOrDefault(x => x.Pricing != null && x.Pricing.Name.Contains("Aylık"))?.Amount ?? g.FirstOrDefault(x => x.PricingID == 3)?.Amount ?? 0
                 })
                 .ToList();
 

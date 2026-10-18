@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,7 +6,7 @@ namespace CarBook.Domain.Entities
 {
     public class Pricing
     {
-        public int PricingId { get; set; }
+        public int PricingID { get; set; }
         public string Name { get; set; }
         public List<CarPricing> CarPricings { get; set; }
     }

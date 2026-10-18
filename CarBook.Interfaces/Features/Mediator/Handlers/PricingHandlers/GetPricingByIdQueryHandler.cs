@@ -1,4 +1,4 @@
-﻿using CarBook.Application.Features.Mediator.Queries.PricingQueries;
+using CarBook.Application.Features.Mediator.Queries.PricingQueries;
 using CarBook.Application.Features.Mediator.Results.PricingResults;
 using CarBook.Application.Interfaces;
 using CarBook.Domain.Entities;
@@ -22,7 +22,7 @@ namespace CarBook.Application.Pricings.Mediator.Handlers.PricingHandlers
             var values = await _repository.GetByIdAsync(request.Id);
             return new GetPricingByIdQueryResult
             {
-                PricingId = values.PricingId,
+                PricingId = values.PricingID,
                 Name = values.Name
             };
         }

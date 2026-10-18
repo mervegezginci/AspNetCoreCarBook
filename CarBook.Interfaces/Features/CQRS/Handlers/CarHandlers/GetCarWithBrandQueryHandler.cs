@@ -22,7 +22,7 @@ namespace CarBook.Application.Features.CQRS.Handlers.CarHandlers
                 BrandName = x.Brand.Name,
                 BrandID = x.BrandID,
                 BigImageUrl = x.BigImageUrl,
-                CarId = x.CarId,
+                CarId = x.CarID,
                 CoverImageUrl = x.CoverImageUrl,
                 Fuel = x.Fuel,
                 Km = x.Km,

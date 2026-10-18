@@ -1,4 +1,4 @@
-﻿using CarBook.Application.Features.CQRS.Results.CarResults;
+using CarBook.Application.Features.CQRS.Results.CarResults;
 using CarBook.Application.Interfaces;
 using CarBook.Domain.Entities;
 using System;
@@ -21,7 +21,7 @@ namespace CarBook.Application.Features.CQRS.Handlers.CarHandlers
             {
                 BrandID = x.BrandID,
                 BigImageUrl = x.BigImageUrl,
-                CarId = x.CarId,
+                CarId = x.CarID,
                 CoverImageUrl = x.CoverImageUrl,
                 Fuel = x.Fuel,
                 Km = x.Km,

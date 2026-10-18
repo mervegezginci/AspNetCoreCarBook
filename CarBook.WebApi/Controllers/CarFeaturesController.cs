@@ -26,18 +26,23 @@ namespace CarBook.WebApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetCarFeaturesByCarId(int id)
         {
-            var values = await _context.CarFeatures
-                .Include(x => x.Feature)
+            var allFeatures = await _context.Features.ToListAsync();
+            var carFeatures = await _context.CarFeatures
                 .Where(x => x.CarID == id)
-                .Select(x => new
-                {
-                    CarFeatureId = x.CarFeatureId,
-                    CarID = x.CarID,
-                    FeatureID = x.FeatureID,
-                    FeatureName = x.Feature != null ? x.Feature.Name : "",
-                    Available = x.Available
-                })
                 .ToListAsync();
+
+            var values = allFeatures.Select(f =>
+            {
+                var existing = carFeatures.FirstOrDefault(cf => cf.FeatureID == f.FeatureId);
+                return new
+                {
+                    CarFeatureId = existing != null ? existing.CarFeatureID : 0,
+                    CarID = id,
+                    FeatureID = f.FeatureId,
+                    FeatureName = f.Name,
+                    Available = existing != null && existing.Available
+                };
+            }).ToList();
 
             return Ok(values);
         }

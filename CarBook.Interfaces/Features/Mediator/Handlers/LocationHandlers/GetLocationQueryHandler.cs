@@ -1,4 +1,4 @@
-﻿using CarBook.Application.Features.Mediator.Queries.LocationQueries;
+using CarBook.Application.Features.Mediator.Queries.LocationQueries;
 using CarBook.Application.Features.Mediator.Results.LocationResults;
 using CarBook.Application.Interfaces;
 using CarBook.Domain.Entities;
@@ -23,7 +23,7 @@ namespace CarBook.Application.Locations.Mediator.Handlers.LocationHandlers
             var values = await _repository.GetAllAsync();
             return values.Select(x => new GetLocationQueryResult
             {
-                LocationId = x.LocationId,
+                LocationId = x.LocationID,
                 Name = x.Name
             }).ToList();
         }

@@ -1,4 +1,4 @@
-ï»¿@model List<ResultLocationDto>
+@model List<ResultLocationDto>
 
 @{
     ViewData["Title"] = "Index";
@@ -12,12 +12,12 @@
             <div class="col-xl-12">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">Lokasyon Bilgileri AlanÄ±</h4>
+                        <h4 class="card-title">Lokasyon Bilgileri Alaný</h4>
                         <p class="card-subtitle mb-4">
-                            Ana sayfa ve araÃ§ kiralama sayfasÄ±nda yer alan araÃ§larÄ±n alÄ±nÄ±ÅŸ ve bÄ±rakÄ±lÄ±ÅŸ noktalarÄ±nÄ± temsil eden yer lokasyon kÄ±smÄ±dÄ±r. AÅŸaÄŸÄ±da araÃ§ kiralama noktalarÄ±na ait lokasyon bilgilerinin isimleri yer almaktadÄ±r. SaÄŸ tarafta yer alan buton Ã¼zerinden bu lokasyonun harita bilgisine eriÅŸim saÄŸlayabilirsiniz.
+                            Ana sayfa ve araç kiralama sayfasýnda yer alan araçlarýn alýnýþ ve býrakýlýþ noktalarýný temsil eden yer lokasyon kýsmýdýr. Aþaðýda araç kiralama noktalarýna ait lokasyon bilgilerinin isimleri yer almaktadýr. Sað tarafta yer alan buton üzerinden bu lokasyonun harita bilgisine eriþim saðlayabilirsiniz.
                         </p>
                         <a href="/Admin/AdminLocation/CreateLocation" class="btn btn-primary float-right mb-3">
-                            Yeni Lokasyon GiriÅŸi
+                            Yeni Lokasyon Giriþi
                         </a>
 
                         <div class="table-responsive">
@@ -27,8 +27,8 @@
                                         <th>#</th>
                                         <th>Lokasyon</th>
                                         <th>Sil</th>
-                                        <th>GÃ¼ncelle</th>
-                                        <th>Konumu AÃ§</th>
+                                        <th>Güncelle</th>
+                                        <th>Konumu Aç</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -38,9 +38,9 @@
                                         <tr>
                                             <td>@count</td>
                                             <td>@item.Name</td>
-                                            <td><a href="/Admin/AdminLocation/RemoveLocation/@item.LocationId" class="btn btn-outline-danger">Sil</a></td>
-                                            <td><a href="/Admin/AdminLocation/UpdateLocation/@item.LocationId" class="btn btn-outline-success">GÃ¼ncelle</a></td>
-                                            <td><a href="/Admin/AdminLocation/LocationDetail/@item.LocationId" class="btn btn-outline-dark">Konumu AÃ§</a></td>
+                                            <td><a href="/Admin/AdminLocation/RemoveLocation/@item.LocationID" class="btn btn-outline-danger">Sil</a></td>
+                                            <td><a href="/Admin/AdminLocation/UpdateLocation/@item.LocationID" class="btn btn-outline-success">Güncelle</a></td>
+                                            <td><a href="/Admin/AdminLocation/LocationDetail/@item.LocationID" class="btn btn-outline-dark">Konumu Aç</a></td>
                                         </tr>
                                     }
                                 </tbody>

@@ -1,10 +1,4 @@
-using CarBook.Dto.AuthorDtos;
-using CarBook.Dto.BlogDtos;
-using CarBook.Dto.BrandDtos;
-using CarBook.Dto.CarDtos;
-using CarBook.Dto.CarPricingDtos;
-using CarBook.Dto.CommentDtos;
-using CarBook.Dto.LocationDtos;
+using CarBook.Dto.StatisticsDtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -27,10 +21,10 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         [Route("")]
         public async Task<IActionResult> Index()
         {
-            var client = _httpClientFactory.CreateClient();
             var random = new Random();
+            var client = _httpClientFactory.CreateClient();
 
-            // Random Yüzdelik Değerler
+            // Default random percentages
             ViewBag.v1 = random.Next(10, 95);
             ViewBag.locationCountRandom = random.Next(10, 95);
             ViewBag.authorCountRandom = random.Next(10, 95);
@@ -48,152 +42,229 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
             ViewBag.carBrandAndModelByRentPriceDailyMaxRandom = random.Next(10, 95);
             ViewBag.carBrandAndModelByRentPriceDailyMinRandom = random.Next(10, 95);
 
-            // 1. Araçlar Listesi
-            List<ResultLast5CarsWithBrandsDto> cars = new();
+            #region 1. Toplam Araç Sayısı
             try
             {
-                var carResponse = await client.GetAsync("https://localhost:7046/api/Cars/GetCarWithBrand");
-                if (!carResponse.IsSuccessStatusCode)
+                var res = await client.GetAsync("https://localhost:7046/api/Statistics/GetCarCount");
+                if (res.IsSuccessStatusCode)
                 {
-                    carResponse = await client.GetAsync("https://localhost:7046/api/Cars");
-                }
-                if (carResponse.IsSuccessStatusCode)
-                {
-                    var data = await carResponse.Content.ReadAsStringAsync();
-                    cars = JsonConvert.DeserializeObject<List<ResultLast5CarsWithBrandsDto>>(data) ?? new();
+                    var json = await res.Content.ReadAsStringAsync();
+                    var val = JsonConvert.DeserializeObject<ResultStatisticsDto>(json);
+                    ViewBag.v = val?.carCount ?? 0;
                 }
             }
-            catch { }
+            catch { ViewBag.v = 0; }
+            #endregion
 
-            // 2. Lokasyonlar
-            List<ResultLocationDto> locations = new();
+            #region 2. Lokasyon Sayısı
             try
             {
-                var locResponse = await client.GetAsync("https://localhost:7046/api/Locations");
-                if (locResponse.IsSuccessStatusCode)
+                var res = await client.GetAsync("https://localhost:7046/api/Statistics/GetLocationCount");
+                if (res.IsSuccessStatusCode)
                 {
-                    var data = await locResponse.Content.ReadAsStringAsync();
-                    locations = JsonConvert.DeserializeObject<List<ResultLocationDto>>(data) ?? new();
+                    var json = await res.Content.ReadAsStringAsync();
+                    var val = JsonConvert.DeserializeObject<ResultStatisticsDto>(json);
+                    ViewBag.locationCount = val?.locationCount ?? 0;
                 }
             }
-            catch { }
+            catch { ViewBag.locationCount = 0; }
+            #endregion
 
-            // 3. Yazarlar
-            List<ResultAuthorDto> authors = new();
+            #region 3. Yazar Sayısı
             try
             {
-                var authorResponse = await client.GetAsync("https://localhost:7046/api/Authors");
-                if (authorResponse.IsSuccessStatusCode)
+                var res = await client.GetAsync("https://localhost:7046/api/Statistics/GetAuthorCount");
+                if (res.IsSuccessStatusCode)
                 {
-                    var data = await authorResponse.Content.ReadAsStringAsync();
-                    authors = JsonConvert.DeserializeObject<List<ResultAuthorDto>>(data) ?? new();
+                    var json = await res.Content.ReadAsStringAsync();
+                    var val = JsonConvert.DeserializeObject<ResultStatisticsDto>(json);
+                    ViewBag.authorCount = val?.authorCount ?? 0;
                 }
             }
-            catch { }
+            catch { ViewBag.authorCount = 0; }
+            #endregion
 
-            // 4. Bloglar
-            List<ResultAllBlogsWithAuthorDto> blogs = new();
+            #region 4. Blog Sayısı
             try
             {
-                var blogResponse = await client.GetAsync("https://localhost:7046/api/Blogs/GetAllBlogsWithAuthorsList");
-                if (!blogResponse.IsSuccessStatusCode)
+                var res = await client.GetAsync("https://localhost:7046/api/Statistics/GetBlogCount");
+                if (res.IsSuccessStatusCode)
                 {
-                    blogResponse = await client.GetAsync("https://localhost:7046/api/Blogs");
-                }
-                if (blogResponse.IsSuccessStatusCode)
-                {
-                    var data = await blogResponse.Content.ReadAsStringAsync();
-                    blogs = JsonConvert.DeserializeObject<List<ResultAllBlogsWithAuthorDto>>(data) ?? new();
+                    var json = await res.Content.ReadAsStringAsync();
+                    var val = JsonConvert.DeserializeObject<ResultStatisticsDto>(json);
+                    ViewBag.blogCount = val?.blogCount ?? 0;
                 }
             }
-            catch { }
+            catch { ViewBag.blogCount = 0; }
+            #endregion
 
-            // 5. Markalar
-            List<ResultBrandDto> brands = new();
+            #region 5. Marka Sayısı
             try
             {
-                var brandResponse = await client.GetAsync("https://localhost:7046/api/Brands");
-                if (brandResponse.IsSuccessStatusCode)
+                var res = await client.GetAsync("https://localhost:7046/api/Statistics/GetBrandCount");
+                if (res.IsSuccessStatusCode)
                 {
-                    var data = await brandResponse.Content.ReadAsStringAsync();
-                    brands = JsonConvert.DeserializeObject<List<ResultBrandDto>>(data) ?? new();
+                    var json = await res.Content.ReadAsStringAsync();
+                    var val = JsonConvert.DeserializeObject<ResultStatisticsDto>(json);
+                    ViewBag.brandCount = val?.brandCount ?? 0;
                 }
             }
-            catch { }
+            catch { ViewBag.brandCount = 0; }
+            #endregion
 
-            // 6. Fiyatlandırmalar
-            List<ResultCarPricingWithCarDto> carPricings = new();
+            #region 6. Ortalama Günlük Fiyat
             try
             {
-                var pricingResponse = await client.GetAsync("https://localhost:7046/api/CarPricings");
-                if (pricingResponse.IsSuccessStatusCode)
+                var res = await client.GetAsync("https://localhost:7046/api/Statistics/GetAvgRentPriceForDaily");
+                if (res.IsSuccessStatusCode)
                 {
-                    var data = await pricingResponse.Content.ReadAsStringAsync();
-                    carPricings = JsonConvert.DeserializeObject<List<ResultCarPricingWithCarDto>>(data) ?? new();
+                    var json = await res.Content.ReadAsStringAsync();
+                    var val = JsonConvert.DeserializeObject<ResultStatisticsDto>(json);
+                    ViewBag.avgRentPriceForDaily = val?.avgPriceForDaily.ToString("0.00") ?? "0.00";
                 }
             }
-            catch { }
+            catch { ViewBag.avgRentPriceForDaily = "0.00"; }
+            #endregion
 
-            // 7. Yorumlar
-            List<ResultCommentDto> comments = new();
+            #region 7. Ortalama Haftalık Fiyat
             try
             {
-                var commentResponse = await client.GetAsync("https://localhost:7046/api/Comments");
-                if (commentResponse.IsSuccessStatusCode)
+                var res = await client.GetAsync("https://localhost:7046/api/Statistics/GetAvgRentPriceForWeekly");
+                if (res.IsSuccessStatusCode)
                 {
-                    var data = await commentResponse.Content.ReadAsStringAsync();
-                    comments = JsonConvert.DeserializeObject<List<ResultCommentDto>>(data) ?? new();
+                    var json = await res.Content.ReadAsStringAsync();
+                    var val = JsonConvert.DeserializeObject<ResultStatisticsDto>(json);
+                    ViewBag.avgRentPriceForWeekly = val?.avgRentPriceForWeekl.ToString("0.00") ?? "0.00";
                 }
             }
-            catch { }
+            catch { ViewBag.avgRentPriceForWeekly = "0.00"; }
+            #endregion
 
-            // --- DEĞERLERİN ATANMASI ---
-            // Başlık 1
-            ViewBag.v = cars.Count;
-            ViewBag.locationCount = locations.Count;
-            ViewBag.authorCount = authors.Count;
-            ViewBag.blogCount = blogs.Count;
-
-            // Başlık 2
-            ViewBag.brandCount = brands.Count;
-
-            var dailyPricings = carPricings.Where(x => (x.PricingName != null && x.PricingName.Contains("Günlük")) || x.PricingID == 1).ToList();
-            var weeklyPricings = carPricings.Where(x => (x.PricingName != null && x.PricingName.Contains("Haftalık")) || x.PricingID == 2).ToList();
-            var monthlyPricings = carPricings.Where(x => (x.PricingName != null && x.PricingName.Contains("Aylık")) || x.PricingID == 3).ToList();
-
-            ViewBag.avgRentPriceForDaily = dailyPricings.Any() ? dailyPricings.Average(x => x.Amount).ToString("N2") : (carPricings.Any() ? carPricings.Average(x => x.Amount).ToString("N2") : "0.00");
-            ViewBag.avgRentPriceForWeekly = weeklyPricings.Any() ? weeklyPricings.Average(x => x.Amount).ToString("N2") : (dailyPricings.Any() ? (dailyPricings.Average(x => x.Amount) * 6).ToString("N2") : "0.00");
-            ViewBag.avgRentPriceForMonthly = monthlyPricings.Any() ? monthlyPricings.Average(x => x.Amount).ToString("N2") : (dailyPricings.Any() ? (dailyPricings.Average(x => x.Amount) * 24).ToString("N2") : "0.00");
-
-            // Başlık 3
-            ViewBag.carCountByTranmissionIsAuto = cars.Count(x => !string.IsNullOrEmpty(x.Transmission) && (x.Transmission.ToLower().Contains("oto") || x.Transmission.ToLower().Contains("auto")));
-
-            var maxCarBrandGroup = cars.GroupBy(x => x.BrandName).OrderByDescending(g => g.Count()).FirstOrDefault();
-            ViewBag.brandNameByMaxCar = maxCarBrandGroup != null && !string.IsNullOrEmpty(maxCarBrandGroup.Key) ? maxCarBrandGroup.Key : (brands.FirstOrDefault()?.name ?? "-");
-
-            var maxCommentBlogGroup = comments.GroupBy(x => x.BlogID).OrderByDescending(g => g.Count()).FirstOrDefault();
-            if (maxCommentBlogGroup != null)
+            #region 8. Ortalama Aylık Fiyat
+            try
             {
-                var topBlog = blogs.FirstOrDefault(x => x.BlogID == maxCommentBlogGroup.Key);
-                ViewBag.blogTitleByMaxBlogComment = topBlog != null ? topBlog.Title : (comments.FirstOrDefault()?.BlogTitle ?? "-");
+                var res = await client.GetAsync("https://localhost:7046/api/Statistics/GetAvgRentPriceForMonthly");
+                if (res.IsSuccessStatusCode)
+                {
+                    var json = await res.Content.ReadAsStringAsync();
+                    var val = JsonConvert.DeserializeObject<ResultStatisticsDto>(json);
+                    ViewBag.avgRentPriceForMonthly = val?.avgRentPriceForMonthly.ToString("0.00") ?? "0.00";
+                }
             }
-            else
+            catch { ViewBag.avgRentPriceForMonthly = "0.00"; }
+            #endregion
+
+            #region 9. Otomatik Vites Araç Sayısı
+            try
             {
-                ViewBag.blogTitleByMaxBlogComment = blogs.FirstOrDefault()?.Title ?? "-";
+                var res = await client.GetAsync("https://localhost:7046/api/Statistics/GetCarCountByTranmissionIsAuto");
+                if (res.IsSuccessStatusCode)
+                {
+                    var json = await res.Content.ReadAsStringAsync();
+                    var val = JsonConvert.DeserializeObject<ResultStatisticsDto>(json);
+                    ViewBag.carCountByTranmissionIsAuto = val?.carCountByTranmissionIsAuto ?? 0;
+                }
             }
+            catch { ViewBag.carCountByTranmissionIsAuto = 0; }
+            #endregion
 
-            ViewBag.carCountByKmSmallerThen1000 = cars.Count(x => x.Km < 10000);
+            #region 10. En Fazla Araçlı Marka
+            try
+            {
+                var res = await client.GetAsync("https://localhost:7046/api/Statistics/GetBrandNameByMaxCar");
+                if (res.IsSuccessStatusCode)
+                {
+                    var json = await res.Content.ReadAsStringAsync();
+                    var val = JsonConvert.DeserializeObject<ResultStatisticsDto>(json);
+                    ViewBag.brandNameByMaxCar = val?.brandNameByMaxCar ?? "-";
+                }
+            }
+            catch { ViewBag.brandNameByMaxCar = "-"; }
+            #endregion
 
-            // Başlık 4
-            ViewBag.carCountByFuelGasolineOrDiesel = cars.Count(x => !string.IsNullOrEmpty(x.Fuel) && (x.Fuel.ToLower().Contains("benzin") || x.Fuel.ToLower().Contains("dizel") || x.Fuel.ToLower().Contains("diesel")));
-            ViewBag.carCountByFuelElectric = cars.Count(x => !string.IsNullOrEmpty(x.Fuel) && (x.Fuel.ToLower().Contains("elektrik") || x.Fuel.ToLower().Contains("electric")));
+            #region 11. En Çok Yorum Alan Blog
+            try
+            {
+                var res = await client.GetAsync("https://localhost:7046/api/Statistics/GetBlogTitleByMaxBlogComment");
+                if (res.IsSuccessStatusCode)
+                {
+                    var json = await res.Content.ReadAsStringAsync();
+                    var val = JsonConvert.DeserializeObject<ResultStatisticsDto>(json);
+                    ViewBag.blogTitleByMaxBlogComment = val?.blogTitleByMaxBlogComment ?? "-";
+                }
+            }
+            catch { ViewBag.blogTitleByMaxBlogComment = "-"; }
+            #endregion
 
-            var sortedDaily = dailyPricings.Any() ? dailyPricings : carPricings;
-            var maxDaily = sortedDaily.OrderByDescending(x => x.Amount).FirstOrDefault();
-            var minDaily = sortedDaily.OrderBy(x => x.Amount).FirstOrDefault();
+            #region 12. Km'si 1000'den Az Araçlar
+            try
+            {
+                var res = await client.GetAsync("https://localhost:7046/api/Statistics/GetCarCountByKmSmallerThen1000");
+                if (res.IsSuccessStatusCode)
+                {
+                    var json = await res.Content.ReadAsStringAsync();
+                    var val = JsonConvert.DeserializeObject<ResultStatisticsDto>(json);
+                    ViewBag.carCountByKmSmallerThen1000 = val?.carCountByKmSmallerThen1000 ?? 0;
+                }
+            }
+            catch { ViewBag.carCountByKmSmallerThen1000 = 0; }
+            #endregion
 
-            ViewBag.carBrandAndModelByRentPriceDailyMax = maxDaily != null ? $"{maxDaily.BrandName} {maxDaily.Model}" : "-";
-            ViewBag.carBrandAndModelByRentPriceDailyMin = minDaily != null ? $"{minDaily.BrandName} {minDaily.Model}" : "-";
+            #region 13. Benzinli veya Dizel Araç Sayısı
+            try
+            {
+                var res = await client.GetAsync("https://localhost:7046/api/Statistics/GetCarCountByFuelGasolineOrDiesel");
+                if (res.IsSuccessStatusCode)
+                {
+                    var json = await res.Content.ReadAsStringAsync();
+                    var val = JsonConvert.DeserializeObject<ResultStatisticsDto>(json);
+                    ViewBag.carCountByFuelGasolineOrDiesel = val?.carCountByFuelGasolineOrDiesel ?? 0;
+                }
+            }
+            catch { ViewBag.carCountByFuelGasolineOrDiesel = 0; }
+            #endregion
+
+            #region 14. Elektrikli Araç Sayısı
+            try
+            {
+                var res = await client.GetAsync("https://localhost:7046/api/Statistics/GetCarCountByFuelElectric");
+                if (res.IsSuccessStatusCode)
+                {
+                    var json = await res.Content.ReadAsStringAsync();
+                    var val = JsonConvert.DeserializeObject<ResultStatisticsDto>(json);
+                    ViewBag.carCountByFuelElectric = val?.carCountByFuelElectric ?? 0;
+                }
+            }
+            catch { ViewBag.carCountByFuelElectric = 0; }
+            #endregion
+
+            #region 15. En Yüksek Fiyatlı Araç
+            try
+            {
+                var res = await client.GetAsync("https://localhost:7046/api/Statistics/GetCarBrandAndModelByRentPriceDailyMax");
+                if (res.IsSuccessStatusCode)
+                {
+                    var json = await res.Content.ReadAsStringAsync();
+                    var val = JsonConvert.DeserializeObject<ResultStatisticsDto>(json);
+                    ViewBag.carBrandAndModelByRentPriceDailyMax = val?.carBrandAndModelByRentPriceDailyMax ?? "-";
+                }
+            }
+            catch { ViewBag.carBrandAndModelByRentPriceDailyMax = "-"; }
+            #endregion
+
+            #region 16. En Uygun Fiyatlı Araç
+            try
+            {
+                var res = await client.GetAsync("https://localhost:7046/api/Statistics/GetCarBrandAndModelByRentPriceDailyMin");
+                if (res.IsSuccessStatusCode)
+                {
+                    var json = await res.Content.ReadAsStringAsync();
+                    var val = JsonConvert.DeserializeObject<ResultStatisticsDto>(json);
+                    ViewBag.carBrandAndModelByRentPriceDailyMin = val?.carBrandAndModelByRentPriceDailyMin ?? "-";
+                }
+            }
+            catch { ViewBag.carBrandAndModelByRentPriceDailyMin = "-"; }
+            #endregion
 
             return View();
         }

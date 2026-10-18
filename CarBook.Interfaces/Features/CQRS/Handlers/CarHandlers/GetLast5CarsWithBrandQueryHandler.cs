@@ -1,4 +1,4 @@
-﻿using CarBook.Application.Features.CQRS.Results.CarResults;
+using CarBook.Application.Features.CQRS.Results.CarResults;
 using CarBook.Application.Interfaces.CarInterfaces;
 using System;
 using System.Collections.Generic;
@@ -22,14 +22,15 @@ namespace CarBook.Application.Features.CQRS.Handlers.CarHandlers
                 BrandName = x.Brand.Name,
                 BrandID = x.BrandID,
                 BigImageUrl = x.BigImageUrl,
-                CarId = x.CarId,
+                CarId = x.CarID,
                 CoverImageUrl = x.CoverImageUrl,
                 Fuel = x.Fuel,
                 Km = x.Km,
                 Luggage = x.Luggage,
                 Model = x.Model,
                 Seat = x.Seat,
-                Transmission = x.Transmission
+                Transmission = x.Transmission,
+                PricingAmount = x.CarPricings != null && x.CarPricings.Any() ? (x.CarPricings.FirstOrDefault(p => p.PricingID == 1 || p.PricingID == 2)?.Amount ?? x.CarPricings.FirstOrDefault()?.Amount ?? 0) : 0
             }).ToList();
         }
     }
