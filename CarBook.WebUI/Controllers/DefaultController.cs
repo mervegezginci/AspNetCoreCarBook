@@ -27,11 +27,23 @@ namespace CarBook.WebUI.Controllers
                                                        select new SelectListItem
                                                        {
                                                            Text = x.Name,
-                                                           Value = x.LocationId.ToString()
+                                                           Value = x.LocationID.ToString()
                                                        }).ToList();
                 ViewBag.LocationValues = locationValues;
+                ViewBag.v = locationValues;
             }
             return View();
+        }
+
+        [HttpPost]
+        public IActionResult Index(string book_pick_date, string book_off_date, string time_pick, string time_off, string locationID)
+        {
+            TempData["bookpickdate"] = book_pick_date;
+            TempData["bookoffdate"] = book_off_date;
+            TempData["timepick"] = time_pick;
+            TempData["timeoff"] = time_off;
+            TempData["locationID"] = locationID;
+            return RedirectToAction("Index", "RentACarList");
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -17,5 +17,6 @@ namespace CarBook.Dto.CarDtos
         public byte Luggage { get; set; }
         public string Fuel { get; set; }
         public string BigImageUrl { get; set; }
+        public decimal PricingAmount { get; set; }
     }
 }

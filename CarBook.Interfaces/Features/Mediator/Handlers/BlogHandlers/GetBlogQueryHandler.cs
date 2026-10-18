@@ -1,4 +1,4 @@
-﻿using CarBook.Application.Features.Mediator.Queries.BlogQueries;
+using CarBook.Application.Features.Mediator.Queries.BlogQueries;
 using CarBook.Application.Features.Mediator.Results.BlogResults;
 using CarBook.Application.Interfaces;
 using CarBook.Domain.Entities;
@@ -23,7 +23,7 @@ namespace CarBook.Application.Blogs.Mediator.Handlers.BlogHandlers
             var values = await _repository.GetAllAsync();
             return values.Select(x => new GetBlogQueryResult
             {
-                BlogId = x.BlogId,
+                BlogId = x.BlogID,
                 Title = x.Title,
                 AuthorId = x.AuthorId,
                 CoverImageUrl = x.CoverImageUrl,

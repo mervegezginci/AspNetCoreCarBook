@@ -1,4 +1,4 @@
-﻿using CarBook.Application.Features.CQRS.Command.CarCommands;
+using CarBook.Application.Features.CQRS.Command.CarCommands;
 using CarBook.Application.Interfaces;
 using CarBook.Domain.Entities;
 using System;
@@ -20,7 +20,7 @@ namespace CarBook.Application.Features.CQRS.Handlers.CarHandlers
             values.Fuel = command.Fuel;
             values.Transmission = command.Transmission;
             values.BigImageUrl = command.BigImageUrl;
-            values.CarId = command.CarId;
+            values.CarID = command.CarId;
             values.CoverImageUrl = command.CoverImageUrl;
             values.Km = command.Km;
             values.Luggage = command.Luggage;

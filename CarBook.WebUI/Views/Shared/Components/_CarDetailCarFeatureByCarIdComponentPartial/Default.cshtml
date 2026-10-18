@@ -1,0 +1,35 @@
+@model List<CarBook.Dto.CarFeatureDtos.ResultCarFeatureByCarIdDto>
+
+<div class="tab-pane fade show active" id="pills-description" role="tabpanel" aria-labelledby="pills-description-tab">
+	<div class="row">
+		@if (Model != null && Model.Any())
+		{
+			int chunkSize = (int)Math.Ceiling(Model.Count / 3.0);
+			var chunks = Model.Chunk(chunkSize > 0 ? chunkSize : 1);
+			foreach (var chunk in chunks)
+			{
+				<div class="col-md-4">
+					<ul class="features">
+						@foreach (var item in chunk)
+						{
+							if (item.Available)
+							{
+								<li class="check"><span class="ion-ios-checkmark"></span>@item.FeatureName</li>
+							}
+							else
+							{
+								<li class="remove"><span class="ion-ios-close"></span>@item.FeatureName</li>
+							}
+						}
+					</ul>
+				</div>
+			}
+		}
+		else
+		{
+			<div class="col-md-12">
+				<p class="text-muted">Bu araç için henüz teknik özellik tanımlanmamıştır.</p>
+			</div>
+		}
+	</div>
+</div>

@@ -28,8 +28,17 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
             if (responseMessage.IsSuccessStatusCode)
             {
                 var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var values = JsonConvert.DeserializeObject<List<ResultTagCloudDto>>(jsonData);
-                return View(values ?? new List<ResultTagCloudDto>());
+                var values = JsonConvert.DeserializeObject<List<ResultTagCloudDto>>(jsonData) ?? new List<ResultTagCloudDto>();
+                
+                // Birden fazla gösterimi engellemek için tüm etiketleri başlığına göre tekil (distinct) hale getiriyoruz
+                var distinctValues = values
+                    .Where(x => !string.IsNullOrWhiteSpace(x.Title))
+                    .GroupBy(x => x.Title.Trim(), StringComparer.OrdinalIgnoreCase)
+                    .Select(g => g.First())
+                    .OrderBy(x => x.Title)
+                    .ToList();
+
+                return View(distinctValues);
             }
             return View(new List<ResultTagCloudDto>());
         }
@@ -206,9 +215,27 @@ namespace CarBook.WebUI.Areas.Admin.Controllers
         }
 
         [Route("RemoveTagCloud/{id}")]
-        public async Task<IActionResult> RemoveTagCloud(int id, int? blogId)
+        public async Task<IActionResult> RemoveTagCloud(int id, int? blogId, string? title)
         {
             var client = _httpClientFactory.CreateClient();
+
+            // Eğer ana sayfadan (tüm etiketler) başlığa göre silme talep edilmişse o başlığa sahip tüm kayıtları sil
+            if (!string.IsNullOrWhiteSpace(title) && (!blogId.HasValue || blogId.Value <= 0))
+            {
+                var allResponse = await client.GetAsync("https://localhost:7046/api/TagClouds");
+                if (allResponse.IsSuccessStatusCode)
+                {
+                    var json = await allResponse.Content.ReadAsStringAsync();
+                    var allTags = JsonConvert.DeserializeObject<List<ResultTagCloudDto>>(json) ?? new List<ResultTagCloudDto>();
+                    var matching = allTags.Where(x => string.Equals(x.Title?.Trim(), title.Trim(), StringComparison.OrdinalIgnoreCase)).ToList();
+                    foreach (var tag in matching)
+                    {
+                        await client.DeleteAsync($"https://localhost:7046/api/TagClouds?id={tag.TagCloudID}");
+                    }
+                    return RedirectToAction("Index", "AdminTagCloud", new { area = "Admin" });
+                }
+            }
+
             var responseMessage = await client.DeleteAsync($"https://localhost:7046/api/TagClouds?id={id}");
             if (responseMessage.IsSuccessStatusCode)
             {

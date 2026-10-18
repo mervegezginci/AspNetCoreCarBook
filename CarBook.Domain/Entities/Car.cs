@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,7 +6,7 @@ namespace CarBook.Domain.Entities
 {
     public class Car
     {
-        public int CarId { get; set; }
+        public int CarID { get; set; }
         public int BrandID { get; set; }
         public Brand Brand { get; set; }
         public string Model { get; set; }
@@ -20,5 +20,9 @@ namespace CarBook.Domain.Entities
         public List<CarFeature> CarFeatures { get; set; }
         public List<CarDescription> CarDescriptions { get; set; }
         public List<CarPricing> CarPricings { get; set; }
+        public List<RentACar> RentACars { get; set; }
+        public List<RentACarProcess> RentACarProcesses { get; set; }
+        public List<Reservation> Reservations { get; set; }
+        public List<Review> Reviews { get; set; }
     }
 }

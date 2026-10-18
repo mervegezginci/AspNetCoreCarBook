@@ -1,0 +1,80 @@
+@model CarBook.Dto.ReservationDtos.CreateReservationDto
+
+@{
+    ViewData["Title"] = "Araç Rezervasyon";
+    Layout = "~/Views/UILayout/Index.cshtml";
+    var car = ViewBag.SelectedCar as CarBook.Dto.CarDtos.ResultCarWithBrandsDtos;
+}
+
+<div class="col-md-12 block-9 mb-md-5">
+
+    @if (car != null)
+    {
+        <div class="card mb-4 border-0 shadow-sm" style="border-radius: 12px; overflow: hidden; background: #fff;">
+            <div class="row no-gutters align-items-center">
+                <div class="col-md-4 text-center p-3" style="background: #f8f9fa;">
+                    <img src="@car.CoverImageUrl" class="img-fluid rounded" alt="@car.BrandName @car.Model" style="max-height: 180px; object-fit: contain;">
+                </div>
+                <div class="col-md-8 p-4">
+                    <span class="badge badge-primary px-3 py-1 font-weight-bold" style="font-size: 13px;">Seçilen Araç</span>
+                    <h3 class="font-weight-bold mb-2 mt-2 text-dark">@car.BrandName @car.Model</h3>
+                    
+                    <div class="row text-muted mt-3" style="font-size: 14px;">
+                        <div class="col-6 col-sm-3 mb-2">
+                            <i class="ion-ios-speedometer text-primary mr-1"></i> <strong>@car.Km</strong> Km
+                        </div>
+                        <div class="col-6 col-sm-3 mb-2">
+                            <i class="ion-ios-settings text-primary mr-1"></i> <strong>@car.Transmission</strong>
+                        </div>
+                        <div class="col-6 col-sm-3 mb-2">
+                            <i class="ion-ios-color-fill text-primary mr-1"></i> <strong>@car.Fuel</strong>
+                        </div>
+                        <div class="col-6 col-sm-3 mb-2">
+                            <i class="ion-ios-person text-primary mr-1"></i> <strong>@car.Seat</strong> Koltuk
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <form class="bg-light p-5 contact-form" method="post" style="border-radius: 12px;">
+        <h3 class="alert alert-success">Araç Rezervasyon Formu</h3>
+        <br />
+        <input type="hidden" asp-for="CarID" value="@ViewBag.v3" class="form-control">
+        
+        <div class="form-group">
+            <input type="text" asp-for="Name" class="form-control" placeholder="Adınız" required>
+        </div>
+        <div class="form-group">
+            <input type="text" asp-for="Surname" class="form-control" placeholder="Soyadınız" required>
+        </div>
+        <div class="form-group">
+            <input type="email" asp-for="Email" class="form-control" placeholder="Mail Adresiniz" required>
+        </div>
+        <div class="form-group">
+            <input type="text" asp-for="Phone" class="form-control" placeholder="Telefon Numaranız" required>
+        </div>
+        <div class="form-group">
+            <label class="font-weight-bold">Alış Lokasyonu</label>
+            @Html.DropDownListFor(x=>x.PickUpLocationID, (List<SelectListItem>)ViewBag.v, "Alış Yapılacak Lokasyonu Seçiniz", new { @class="form-control", @required = "required" })
+        </div>
+        <div class="form-group">
+            <label class="font-weight-bold">Teslim Lokasyonu</label>
+            @Html.DropDownListFor(x=>x.DropOffLocationID, (List<SelectListItem>)ViewBag.v, "Teslim Edilecek Lokasyonu Seçiniz", new { @class="form-control", @required = "required" })
+        </div>
+        <div class="form-group">
+            <input type="text" asp-for="Age" class="form-control" placeholder="Yaşınız">
+        </div>
+        <div class="form-group">
+            <input type="text" asp-for="DriverLicenseYear" class="form-control" placeholder="Ehliyet Yılınız">
+        </div>
+        <div class="form-group">
+            <textarea asp-for="Description" id="" cols="30" rows="5" class="form-control" placeholder="Varsa Eklemek İstedikleriniz"></textarea>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Rezervasyonu Tamamla" class="btn btn-primary py-3 px-5">
+        </div>
+    </form>
+
+</div>

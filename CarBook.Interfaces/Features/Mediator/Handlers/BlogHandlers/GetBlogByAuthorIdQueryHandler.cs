@@ -1,4 +1,4 @@
-﻿using CarBook.Application.Features.Mediator.Queries.BlogQueries;
+using CarBook.Application.Features.Mediator.Queries.BlogQueries;
 using CarBook.Application.Features.Mediator.Results.BlogResults;
 using CarBook.Application.Interfaces.BlogInterfaces;
 using MediatR;
@@ -21,7 +21,7 @@ namespace CarBook.Application.Features.Mediator.Handlers.BlogHandlers
             return values.Select(x => new GetBlogByAuthorIdQueryResult
             {
                 AuthorID = x.AuthorId,
-                BlogID = x.BlogId,
+                BlogID = x.BlogID,
                 AuthorName = x.Author.Name,
                 AuthorDescription = x.Author.Description,
                 AuthorImageUrl = x.Author.ImageUrl,
