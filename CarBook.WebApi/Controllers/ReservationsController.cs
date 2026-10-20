@@ -1,7 +1,8 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using CarBook.Application.Features.Mediator.Commands.ReservationCommands;
+using CarBook.Application.Features.Mediator.Queries.ReservationQueries;
 
 namespace CarBook.WebApi.Controllers
 {
@@ -10,9 +11,32 @@ namespace CarBook.WebApi.Controllers
     public class ReservationsController : ControllerBase
     {
         private readonly IMediator _mediator;
+
         public ReservationsController(IMediator mediator)
         {
             _mediator = mediator;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ReservationList()
+        {
+            var values = await _mediator.Send(new GetReservationQuery());
+            return Ok(values);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetReservation(int id)
+        {
+            var value = await _mediator.Send(new GetReservationByIdQuery(id));
+            if (value == null) return NotFound("Rezervasyon bulunamadı");
+            return Ok(value);
+        }
+
+        [HttpGet("GetByPhone/{phone}")]
+        public async Task<IActionResult> GetReservationsByPhone(string phone)
+        {
+            var values = await _mediator.Send(new GetReservationByPhoneQuery(phone));
+            return Ok(values);
         }
 
         [HttpPost]
@@ -21,6 +45,19 @@ namespace CarBook.WebApi.Controllers
             await _mediator.Send(command);
             return Ok("Rezervasyon başarıyla eklendi");
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> RemoveReservation(int id)
+        {
+            await _mediator.Send(new RemoveReservationCommand(id));
+            return Ok("Rezervasyon silindi");
+        }
+
+        [HttpGet("ChangeStatus/{id}/{status}")]
+        public async Task<IActionResult> ChangeReservationStatus(int id, string status)
+        {
+            await _mediator.Send(new UpdateReservationStatusCommand(id, status));
+            return Ok("Rezervasyon durumu güncellendi");
+        }
     }
 }
-

@@ -35,6 +35,8 @@ using CarBook.Application.Interfaces.RentACarInterfaces;
 using CarBook.Persistence.Repositories.RentACarRepositories;
 using CarBook.Application.Interfaces.CarFeatureInterfaces;
 using CarBook.Persistence.Repositories.CarFeatureRepositories;
+using CarBook.Application.Interfaces.ReservationInterfaces;
+using CarBook.Persistence.Repositories.ReservationRepositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -62,6 +64,7 @@ builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
 builder.Services.AddScoped<ICarDescriptionRepository, CarDescriptionRepository>();
 builder.Services.AddScoped<IRentACarRepository, RentACarRepository>();
 builder.Services.AddScoped<ICarFeatureRepository, CarFeatureRepository>();
+builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
 
 // About Handlers
 builder.Services.AddScoped<GetAboutQueryHandler>();

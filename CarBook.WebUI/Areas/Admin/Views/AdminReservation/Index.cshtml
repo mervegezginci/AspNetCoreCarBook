@@ -1,0 +1,139 @@
+@model List<CarBook.Dto.ReservationDtos.ResultReservationDto>
+
+@{
+    ViewData["Title"] = "Rezervasyonlar";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+    int count = 0;
+}
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <h4 class="card-title mb-1">Gelen Rezervasyon Talepleri</h4>
+                                <p class="card-subtitle text-muted mb-0">Web sitesinden yapılan tüm araç kiralama rezervasyonlarını bu ekrandan yönetebilirsiniz.</p>
+                            </div>
+                            <span class="badge badge-soft-primary p-2" style="font-size: 14px;">Toplam: @Model.Count Rezervasyon</span>
+                        </div>
+
+                        @if (TempData["AdminResSuccess"] != null)
+                        {
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <i class="mdi mdi-check-all mr-2"></i> @TempData["AdminResSuccess"]
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        }
+
+                        <div class="table-responsive">
+                            <table class="table table-hover table-striped mb-0">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Müşteri</th>
+                                        <th>İletişim</th>
+                                        <th>Araç</th>
+                                        <th>Alış / İade Ofisi</th>
+                                        <th>Tarih & Fiyat Notu</th>
+                                        <th>Durum</th>
+                                        <th>İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model != null && Model.Any())
+                                    {
+                                        @foreach (var item in Model)
+                                        {
+                                            count++;
+                                            string badgeColor = "badge-warning";
+                                            if (item.Status == "Onaylandı") { badgeColor = "badge-success"; }
+                                            else if (item.Status == "İptal Edildi") { badgeColor = "badge-danger"; }
+                                            else if (item.Status == "İptal Talebi Alındı") { badgeColor = "badge-warning text-dark"; }
+                                            else if (item.Status == "Tamamlandı") { badgeColor = "badge-info"; }
+
+                                            <tr>
+                                                <td><strong>#@item.ReservationID</strong></td>
+                                                <td>
+                                                    <strong>@item.Name @item.Surname</strong>
+                                                    <div class="small text-muted">Yaş: @item.Age | Ehliyet: @item.DriverLicenseYear yıl</div>
+                                                </td>
+                                                <td>
+                                                    <div><i class="fas fa-phone mr-1 text-primary"></i>@item.Phone</div>
+                                                    <div class="small text-muted"><i class="fas fa-envelope mr-1"></i>@item.Email</div>
+                                                </td>
+                                                <td>
+                                                    <strong class="text-dark">@item.CarBrandAndModel</strong>
+                                                </td>
+                                                <td>
+                                                    <div><span class="badge badge-light border">Alış:</span> @item.PickUpLocationName</div>
+                                                    <div><span class="badge badge-light border">İade:</span> @item.DropOffLocationName</div>
+                                                </td>
+                                                <td>
+                                                    <div class="small" style="max-width: 250px; white-space: normal;">
+                                                        @item.Description
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    @if (item.Status == "İptal Talebi Alındı")
+                                                    {
+                                                        <span class="badge badge-warning p-2 text-dark font-weight-bold" style="font-size: 12px;">
+                                                            <i class="fas fa-exclamation-triangle mr-1"></i> İptal Talebi Geldi
+                                                        </span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="badge @badgeColor p-2" style="font-size: 12px;">@item.Status</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    @if (item.Status == "İptal Talebi Alındı")
+                                                    {
+                                                        <div class="btn-group" role="group">
+                                                            <a href="/Admin/AdminReservation/ChangeStatus/@item.ReservationID/İptal Edildi" class="btn btn-danger btn-sm" title="İptal Talebini Onayla">
+                                                                <i class="fas fa-check-circle mr-1"></i> İptali Onayla
+                                                            </a>
+                                                            <a href="/Admin/AdminReservation/ChangeStatus/@item.ReservationID/Onaylandı" class="btn btn-outline-secondary btn-sm" title="Talebi Reddet, Rezervasyonu Koru">
+                                                                <i class="fas fa-ban mr-1"></i> Reddet
+                                                            </a>
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="btn-group" role="group">
+                                                            <a href="/Admin/AdminReservation/ChangeStatus/@item.ReservationID/Onaylandı" class="btn btn-outline-success btn-sm" title="Onayla">
+                                                                <i class="fas fa-check"></i>
+                                                            </a>
+                                                            <a href="/Admin/AdminReservation/ChangeStatus/@item.ReservationID/İptal Edildi" class="btn btn-outline-warning btn-sm" title="İptal Et">
+                                                                <i class="fas fa-times"></i>
+                                                            </a>
+                                                            <a href="/Admin/AdminReservation/DeleteReservation/@item.ReservationID" onclick="return confirm('Bu rezervasyon kaydını silmek istediğinize emin misiniz?');" class="btn btn-outline-danger btn-sm" title="Sil">
+                                                                <i class="fas fa-trash"></i>
+                                                            </a>
+                                                        </div>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="8" class="text-center py-4 text-muted">
+                                                Henüz kayıtlı bir rezervasyon bulunmamaktadır.
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
