@@ -1,0 +1,115 @@
+@{
+    ViewData["Title"] = "Rezervasyon Onayı";
+    Layout = "~/Views/UILayout/Index.cshtml";
+    var car = ViewBag.SelectedCar as CarBook.Dto.CarDtos.ResultCarWithBrandsDtos;
+    var customer = TempData["SuccessCustomer"]?.ToString() ?? "Değerli Müşterimiz";
+    var phone = TempData["SuccessPhone"]?.ToString();
+    var email = TempData["SuccessEmail"]?.ToString();
+    var dates = TempData["SuccessDates"]?.ToString();
+    var total = TempData["SuccessTotal"]?.ToString();
+}
+
+<section class="ftco-section contact-section" style="padding: 5em 0; background: #f8f9fa;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-9 col-lg-8">
+                <div class="card shadow-lg border-0" style="border-radius: 16px; overflow: hidden;">
+                    
+                    <!-- Başlık Banner -->
+                    <div class="text-white text-center p-4" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                        <div style="font-size: 64px; line-height: 1; margin-bottom: 12px;">
+                            <i class="ion-ios-checkmark-circle" style="color: #ffffff;"></i>
+                        </div>
+                        <h2 class="font-weight-bold text-white mb-2">Rezervasyon Talebiniz Alındı!</h2>
+                        <p class="mb-0 text-white-50" style="font-size: 16px;">Talebiniz sisteme başarıyla kaydedildi. Temsilcimiz en kısa sürede sizinle iletişime geçecektir.</p>
+                    </div>
+
+                    <div class="card-body p-4 p-md-5">
+                        <div class="alert alert-success d-flex align-items-center mb-4" role="alert" style="border-radius: 10px;">
+                            <i class="ion-ios-information-circle-outline mr-3" style="font-size: 28px;"></i>
+                            <div>
+                                <strong>Sayın @customer,</strong> araç kiralama rezervasyonunuz için teşekkür ederiz. Detaylar aşağıda özetlenmiştir.
+                            </div>
+                        </div>
+
+                        <!-- Araç & Rezervasyon Özeti -->
+                        <div class="p-3 mb-4" style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+                            <div class="row align-items-center">
+                                @if (car != null)
+                                {
+                                    <div class="col-md-4 text-center mb-3 mb-md-0">
+                                        <img src="@car.CoverImageUrl" alt="@car.BrandName @car.Model" class="img-fluid rounded" style="max-height: 140px; object-fit: contain;" />
+                                    </div>
+                                    <div class="col-md-8">
+                                        <div class="badge badge-primary px-3 py-1 mb-2" style="font-size: 13px;">Seçilen Araç</div>
+                                        <h4 class="font-weight-bold text-dark mb-1">@car.BrandName @car.Model</h4>
+                                        <p class="text-muted small mb-2"><i class="ion-ios-speedometer mr-1"></i>@car.Km Km | <i class="ion-ios-cog mr-1"></i>@car.Transmission | <i class="ion-ios-color-fill mr-1"></i>@car.Fuel</p>
+                                        
+                                        @if (!string.IsNullOrEmpty(dates))
+                                        {
+                                            <p class="mb-1 text-secondary" style="font-size: 14px;"><strong><i class="ion-ios-calendar mr-1"></i>Tarihler:</strong> @dates</p>
+                                        }
+                                        @if (!string.IsNullOrEmpty(total))
+                                        {
+                                            <p class="mb-0 text-success font-weight-bold" style="font-size: 18px;"><strong>Toplam Tutar:</strong> @total ₺</p>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="col-12">
+                                        <h5 class="font-weight-bold mb-2">Rezervasyon Bilgileri</h5>
+                                        @if (!string.IsNullOrEmpty(dates))
+                                        {
+                                            <p class="mb-1 text-secondary"><strong>Kiralama Tarihleri:</strong> @dates</p>
+                                        }
+                                        @if (!string.IsNullOrEmpty(total))
+                                        {
+                                            <p class="mb-0 text-success font-weight-bold"><strong>Hesaplanan Tutar:</strong> @total ₺</p>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- İletişim Bilgileri Özeti -->
+                        <div class="row mb-4">
+                            @if (!string.IsNullOrEmpty(phone))
+                            {
+                                <div class="col-md-6 mb-2">
+                                    <div class="p-3 bg-light rounded">
+                                        <small class="text-muted d-block">İletişim Numarası</small>
+                                        <strong class="text-dark">@phone</strong>
+                                    </div>
+                                </div>
+                            }
+                            @if (!string.IsNullOrEmpty(email))
+                            {
+                                <div class="col-md-6 mb-2">
+                                    <div class="p-3 bg-light rounded">
+                                        <small class="text-muted d-block">E-Posta Adresi</small>
+                                        <strong class="text-dark">@email</strong>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Durum & Butonlar -->
+                        <div class="text-center pt-3 border-top">
+                            <p class="text-muted small mb-3">
+                                Rezervasyon durumunuzu dilediğiniz zaman telefon numaranız ile "Rezervasyonlarım" sayfasından sorgulayabilirsiniz.
+                            </p>
+                            <a href="/Reservation/MyReservations" class="btn btn-outline-primary px-4 py-2 mr-2" style="border-radius: 8px;">
+                                <i class="ion-ios-search mr-1"></i> Rezervasyonlarımı Sorgula
+                            </a>
+                            <a href="/Default/Index" class="btn btn-primary px-4 py-2" style="border-radius: 8px;">
+                                <i class="ion-ios-home mr-1"></i> Ana Sayfaya Dön
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

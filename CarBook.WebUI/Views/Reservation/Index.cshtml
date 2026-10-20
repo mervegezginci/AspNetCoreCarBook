@@ -4,6 +4,7 @@
     ViewData["Title"] = "Araç Rezervasyon";
     Layout = "~/Views/UILayout/Index.cshtml";
     var car = ViewBag.SelectedCar as CarBook.Dto.CarDtos.ResultCarWithBrandsDtos;
+    decimal dailyPrice = ViewBag.DailyPrice != null ? (decimal)ViewBag.DailyPrice : 0;
 }
 
 <div class="col-md-12 block-9 mb-md-5">
@@ -16,8 +17,19 @@
                     <img src="@car.CoverImageUrl" class="img-fluid rounded" alt="@car.BrandName @car.Model" style="max-height: 180px; object-fit: contain;">
                 </div>
                 <div class="col-md-8 p-4">
-                    <span class="badge badge-primary px-3 py-1 font-weight-bold" style="font-size: 13px;">Seçilen Araç</span>
-                    <h3 class="font-weight-bold mb-2 mt-2 text-dark">@car.BrandName @car.Model</h3>
+                    <div class="d-flex justify-content-between align-items-center flex-wrap">
+                        <div>
+                            <span class="badge badge-primary px-3 py-1 font-weight-bold" style="font-size: 13px;">Seçilen Araç</span>
+                            <h3 class="font-weight-bold mb-1 mt-2 text-dark">@car.BrandName @car.Model</h3>
+                        </div>
+                        <div class="text-right mt-2 mt-md-0">
+                            <span class="text-muted d-block" style="font-size: 13px;">Günlük Kiralama Bedeli</span>
+                            <h3 class="text-success font-weight-bold mb-0">
+                                ₺ @dailyPrice.ToString("N2")
+                                <small class="text-muted font-weight-normal" style="font-size: 14px;">/ Gün</small>
+                            </h3>
+                        </div>
+                    </div>
                     
                     <div class="row text-muted mt-3" style="font-size: 14px;">
                         <div class="col-6 col-sm-3 mb-2">
@@ -38,43 +50,227 @@
         </div>
     }
 
-    <form class="bg-light p-5 contact-form" method="post" style="border-radius: 12px;">
+    <form id="reservationForm" class="bg-light p-5 contact-form" method="post" style="border-radius: 12px;">
         <h3 class="alert alert-success">Araç Rezervasyon Formu</h3>
         <br />
-        <input type="hidden" asp-for="CarID" value="@ViewBag.v3" class="form-control">
+        <input type="hidden" asp-for="CarID" value="@ViewBag.v3">
+        <input type="hidden" id="TotalAmountCalculated" name="TotalAmountCalculated" value="0">
         
-        <div class="form-group">
-            <input type="text" asp-for="Name" class="form-control" placeholder="Adınız" required>
+        <div class="row">
+            <div class="col-md-6 form-group">
+                <label class="font-weight-bold">Adınız</label>
+                <input type="text" asp-for="Name" id="txtCustName" class="form-control" placeholder="Adınız" required>
+            </div>
+            <div class="col-md-6 form-group">
+                <label class="font-weight-bold">Soyadınız</label>
+                <input type="text" asp-for="Surname" id="txtCustSurname" class="form-control" placeholder="Soyadınız" required>
+            </div>
         </div>
-        <div class="form-group">
-            <input type="text" asp-for="Surname" class="form-control" placeholder="Soyadınız" required>
+
+        <div class="row">
+            <div class="col-md-6 form-group">
+                <label class="font-weight-bold">E-Posta Adresiniz</label>
+                <input type="email" asp-for="Email" id="txtCustEmail" class="form-control" placeholder="Mail Adresiniz" required>
+            </div>
+            <div class="col-md-6 form-group">
+                <label class="font-weight-bold">Telefon Numaranız</label>
+                <input type="text" asp-for="Phone" id="txtCustPhone" class="form-control" placeholder="05XXXXXXXXX" required>
+            </div>
         </div>
-        <div class="form-group">
-            <input type="email" asp-for="Email" class="form-control" placeholder="Mail Adresiniz" required>
+
+        <div class="row">
+            <div class="col-md-6 form-group">
+                <label class="font-weight-bold">Alış Lokasyonu</label>
+                @Html.DropDownListFor(x=>x.PickUpLocationID, (List<SelectListItem>)ViewBag.v, "Alış Yapılacak Lokasyonu Seçiniz", new { @class="form-control", @id="ddlPickUp", @required = "required" })
+            </div>
+            <div class="col-md-6 form-group">
+                <label class="font-weight-bold">Teslim Lokasyonu</label>
+                @Html.DropDownListFor(x=>x.DropOffLocationID, (List<SelectListItem>)ViewBag.v, "Teslim Edilecek Lokasyonu Seçiniz", new { @class="form-control", @id="ddlDropOff", @required = "required" })
+            </div>
         </div>
-        <div class="form-group">
-            <input type="text" asp-for="Phone" class="form-control" placeholder="Telefon Numaranız" required>
+
+        <div class="row">
+            <div class="col-md-6 form-group">
+                <label class="font-weight-bold">Alış Tarihi</label>
+                <input type="date" id="txtPickDate" name="PickUpDate" class="form-control" required value="@ViewBag.PickDate">
+            </div>
+            <div class="col-md-6 form-group">
+                <label class="font-weight-bold">Teslim Tarihi</label>
+                <input type="date" id="txtDropDate" name="DropOffDate" class="form-control" required value="@ViewBag.DropDate">
+            </div>
         </div>
-        <div class="form-group">
-            <label class="font-weight-bold">Alış Lokasyonu</label>
-            @Html.DropDownListFor(x=>x.PickUpLocationID, (List<SelectListItem>)ViewBag.v, "Alış Yapılacak Lokasyonu Seçiniz", new { @class="form-control", @required = "required" })
+
+        <!-- Anlık Hesaplanan Fiyat Özeti Kutusu -->
+        <div id="pricingSummaryBox" class="alert alert-info py-3 mb-4" style="display: none; border-radius: 8px;">
+            <div class="d-flex justify-content-between align-items-center flex-wrap">
+                <div>
+                    <h5 class="font-weight-bold mb-1 text-info"><i class="ion-ios-calculator mr-1"></i> Hesaplanan Kiralama Özeti</h5>
+                    <span id="lblDuration" class="text-muted font-weight-bold">Süre: 0 Gün</span> | 
+                    <span class="text-muted">Günlük Bedel: <strong>₺ @dailyPrice.ToString("N2")</strong></span>
+                </div>
+                <div class="text-right">
+                    <span class="text-muted d-block small">Tahmini Toplam Tutar</span>
+                    <h3 id="lblTotalAmount" class="font-weight-bold text-success mb-0">₺ 0,00</h3>
+                </div>
+            </div>
         </div>
-        <div class="form-group">
-            <label class="font-weight-bold">Teslim Lokasyonu</label>
-            @Html.DropDownListFor(x=>x.DropOffLocationID, (List<SelectListItem>)ViewBag.v, "Teslim Edilecek Lokasyonu Seçiniz", new { @class="form-control", @required = "required" })
+
+        <div class="row">
+            <div class="col-md-6 form-group">
+                <label class="font-weight-bold">Yaşınız</label>
+                <input type="number" asp-for="Age" class="form-control" placeholder="Örn: 25" min="18" max="99" required>
+            </div>
+            <div class="col-md-6 form-group">
+                <label class="font-weight-bold">Ehliyet Yılınız</label>
+                <input type="number" asp-for="DriverLicenseYear" class="form-control" placeholder="Kaç yıldır ehliyet sahibisiniz? Örn: 3" min="1" max="60" required>
+            </div>
         </div>
+
         <div class="form-group">
-            <input type="text" asp-for="Age" class="form-control" placeholder="Yaşınız">
+            <label class="font-weight-bold">Varsa Eklemek İstedikleriniz (Not)</label>
+            <textarea asp-for="Description" id="txtUserDescription" cols="30" rows="3" class="form-control" placeholder="Özel talepleriniz veya notlarınız..."></textarea>
         </div>
-        <div class="form-group">
-            <input type="text" asp-for="DriverLicenseYear" class="form-control" placeholder="Ehliyet Yılınız">
-        </div>
-        <div class="form-group">
-            <textarea asp-for="Description" id="" cols="30" rows="5" class="form-control" placeholder="Varsa Eklemek İstedikleriniz"></textarea>
-        </div>
-        <div class="form-group">
-            <input type="submit" value="Rezervasyonu Tamamla" class="btn btn-primary py-3 px-5">
+
+        <div class="form-group mt-4">
+            <button type="button" id="btnPreviewReservation" class="btn btn-primary btn-lg btn-block py-3 font-weight-bold">
+                Rezervasyonu İncele & Onayla
+            </button>
         </div>
     </form>
 
 </div>
+
+<!-- Rezervasyon Onay Modalı (Modal Summary) -->
+<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content" style="border-radius: 12px; border: 0;">
+            <div class="modal-header bg-primary text-white" style="border-top-left-radius: 12px; border-top-right-radius: 12px;">
+                <h5 class="modal-title font-weight-bold text-white" id="confirmModalLabel">
+                    <i class="ion-ios-checkmark-circle mr-2"></i> Rezervasyon Onayı
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body p-4">
+                <p class="text-muted mb-3">Lütfen kiralama bilgilerinizi kontrol edip onaylayınız:</p>
+                
+                <ul class="list-group list-group-flush mb-3">
+                    <li class="list-group-item d-flex justify-content-between px-0 py-2">
+                        <span class="text-muted">Seçilen Araç:</span>
+                        <strong class="text-dark">@(car != null ? $"{car.BrandName} {car.Model}" : "Belirtilmemiş")</strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between px-0 py-2">
+                        <span class="text-muted">Müşteri:</span>
+                        <strong id="modalCustName" class="text-dark"></strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between px-0 py-2">
+                        <span class="text-muted">İletişim:</span>
+                        <strong id="modalCustPhone" class="text-dark"></strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between px-0 py-2">
+                        <span class="text-muted">Alış Noktası:</span>
+                        <strong id="modalPickLoc" class="text-dark"></strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between px-0 py-2">
+                        <span class="text-muted">Teslim Noktası:</span>
+                        <strong id="modalDropLoc" class="text-dark"></strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between px-0 py-2">
+                        <span class="text-muted">Kiralama Tarihleri:</span>
+                        <strong id="modalDates" class="text-dark"></strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between px-0 py-2">
+                        <span class="text-muted">Kiralama Süresi:</span>
+                        <strong id="modalDuration" class="text-primary font-weight-bold"></strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between px-0 py-3 bg-light rounded mt-2 px-3">
+                        <span class="font-weight-bold text-dark">Toplam Kiralama Bedeli:</span>
+                        <strong id="modalTotalAmount" class="text-success h4 mb-0 font-weight-bold"></strong>
+                    </li>
+                </ul>
+            </div>
+            <div class="modal-footer bg-light" style="border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
+                <button type="button" class="btn btn-secondary px-4" data-dismiss="modal">Düzenle</button>
+                <button type="button" id="btnConfirmAndSubmit" class="btn btn-success px-4 font-weight-bold">
+                    <i class="ion-ios-checkmark mr-1"></i> Rezervasyonu Onaylıyorum
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var dailyRate = parseFloat("@dailyPrice.ToString(System.Globalization.CultureInfo.InvariantCulture)") || 0;
+        var pickDateInput = document.getElementById("txtPickDate");
+        var dropDateInput = document.getElementById("dropOffDateInput") || document.getElementById("txtDropDate");
+        var summaryBox = document.getElementById("pricingSummaryBox");
+        var lblDuration = document.getElementById("lblDuration");
+        var lblTotalAmount = document.getElementById("lblTotalAmount");
+        var totalAmountCalculated = document.getElementById("TotalAmountCalculated");
+
+        function calculatePricing() {
+            var pDate = new Date(pickDateInput.value);
+            var dDate = new Date(dropDateInput.value);
+
+            if (pickDateInput.value && dropDateInput.value && dDate >= pDate) {
+                var diffTime = Math.abs(dDate - pDate);
+                var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                if (diffDays === 0) diffDays = 1;
+
+                var total = diffDays * dailyRate;
+
+                lblDuration.innerText = "Süre: " + diffDays + " Gün";
+                lblTotalAmount.innerText = "₺ " + total.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                totalAmountCalculated.value = total.toFixed(2);
+                summaryBox.style.display = "block";
+            } else {
+                summaryBox.style.display = "none";
+            }
+        }
+
+        if (pickDateInput && dropDateInput) {
+            pickDateInput.addEventListener("change", calculatePricing);
+            dropDateInput.addEventListener("change", calculatePricing);
+            calculatePricing();
+        }
+
+        // Onay Modalı Tetikleme
+        var btnPreview = document.getElementById("btnPreviewReservation");
+        var form = document.getElementById("reservationForm");
+
+        btnPreview.addEventListener("click", function () {
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            var pDateVal = pickDateInput.value;
+            var dDateVal = dropDateInput.value;
+
+            if (pDateVal && dDateVal && new Date(dDateVal) < new Date(pDateVal)) {
+                alert("Teslim tarihi alış tarihinden önce olamaz!");
+                return;
+            }
+
+            var ddlPick = document.getElementById("ddlPickUp");
+            var ddlDrop = document.getElementById("ddlDropOff");
+
+            document.getElementById("modalCustName").innerText = document.getElementById("txtCustName").value + " " + document.getElementById("txtCustSurname").value;
+            document.getElementById("modalCustPhone").innerText = document.getElementById("txtCustPhone").value + " (" + document.getElementById("txtCustEmail").value + ")";
+            document.getElementById("modalPickLoc").innerText = ddlPick.options[ddlPick.selectedIndex].text;
+            document.getElementById("modalDropLoc").innerText = ddlDrop.options[ddlDrop.selectedIndex].text;
+            document.getElementById("modalDates").innerText = pDateVal + " ➔ " + dDateVal;
+            document.getElementById("modalDuration").innerText = lblDuration.innerText.replace("Süre: ", "");
+            document.getElementById("modalTotalAmount").innerText = lblTotalAmount.innerText;
+
+            $('#confirmModal').modal('show');
+        });
+
+        // Modaldaki Onay Butonuna Basıldığında Formu Gönder
+        document.getElementById("btnConfirmAndSubmit").addEventListener("click", function () {
+            form.submit();
+        });
+    });
+</script>

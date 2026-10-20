@@ -1,0 +1,149 @@
+@model List<CarBook.Dto.ReservationDtos.ResultReservationDto>
+@{
+    ViewData["Title"] = "Rezervasyonlarım & Durum Sorgulama";
+    Layout = "~/Views/UILayout/Index.cshtml";
+    string searchPhone = ViewBag.SearchPhone as string ?? "";
+}
+
+<section class="ftco-section contact-section" style="padding: 4em 0; background: #f8f9fa;">
+    <div class="container">
+        <div class="row justify-content-center mb-4">
+            <div class="col-md-8 text-center">
+                <h2 class="font-weight-bold">Rezervasyonlarım & Durum Sorgulama</h2>
+                <p class="text-muted">Rezervasyon yaptığınız telefon numarasını girerek tüm rezervasyon detaylarınızı, güncel durumunu görüntüleyebilir veya iptal talebinde bulunabilirsiniz.</p>
+            </div>
+        </div>
+
+        <!-- Arama Formu -->
+        <div class="row justify-content-center mb-5">
+            <div class="col-md-7">
+                <form method="post" action="/Reservation/MyReservations" class="bg-white p-4 rounded shadow-sm">
+                    <div class="input-group">
+                        <input type="text" name="phone" value="@searchPhone" class="form-control form-control-lg" placeholder="Örn: 0555 123 45 67" required style="border-radius: 8px 0 0 8px; font-size: 16px;" />
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-primary px-4 font-weight-bold" style="border-radius: 0 8px 8px 0;">
+                                <i class="ion-ios-search mr-1"></i> Sorgula
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                @if (TempData["CancelSuccess"] != null)
+                {
+                    <div class="alert alert-success mt-3 text-center" style="border-radius: 8px;">
+                        <i class="ion-ios-checkmark-circle mr-1"></i> @TempData["CancelSuccess"]
+                    </div>
+                }
+
+                @if (TempData["CancelError"] != null)
+                {
+                    <div class="alert alert-danger mt-3 text-center" style="border-radius: 8px;">
+                        <i class="ion-ios-alert mr-1"></i> @TempData["CancelError"]
+                    </div>
+                }
+
+                @if (ViewBag.Error != null)
+                {
+                    <div class="alert alert-danger mt-3 text-center" style="border-radius: 8px;">
+                        @ViewBag.Error
+                    </div>
+                }
+
+                @if (ViewBag.Warning != null)
+                {
+                    <div class="alert alert-warning mt-3 text-center" style="border-radius: 8px;">
+                        @ViewBag.Warning
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Rezervasyon Listesi -->
+        @if (Model != null && Model.Any())
+        {
+            <div class="row justify-content-center">
+                <div class="col-md-10">
+                    <h5 class="mb-3 font-weight-bold text-dark">
+                        Bulunan Rezervasyonlar (@Model.Count adet)
+                    </h5>
+
+                    @foreach (var item in Model)
+                    {
+                        string badgeClass = "badge-primary";
+                        if (item.Status == "Onaylandı") { badgeClass = "badge-success"; }
+                        else if (item.Status == "İptal Edildi") { badgeClass = "badge-danger"; }
+                        else if (item.Status == "İptal Talebi Alındı") { badgeClass = "badge-warning text-dark"; }
+                        else if (item.Status == "Tamamlandı") { badgeClass = "badge-info"; }
+
+                        <div class="card mb-4 shadow-sm border-0" style="border-radius: 12px; overflow: hidden;">
+                            <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                                <div>
+                                    <span class="text-muted small">Rezervasyon No:</span>
+                                    <strong class="text-primary font-weight-bold">#REZ-@item.ReservationID</strong>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <span class="badge @badgeClass px-3 py-2 mr-2" style="font-size: 13px; font-weight: 600;">
+                                        @item.Status
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    @if (!string.IsNullOrEmpty(item.CarImageUrl))
+                                    {
+                                        <div class="col-md-3 text-center mb-3 mb-md-0">
+                                            <img src="@item.CarImageUrl" alt="@item.CarBrandAndModel" class="img-fluid rounded" style="max-height: 120px; object-fit: contain;" />
+                                        </div>
+                                    }
+                                    <div class="col-md-@(string.IsNullOrEmpty(item.CarImageUrl) ? "12" : "9")">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <h5 class="font-weight-bold mb-2">@item.CarBrandAndModel</h5>
+                                            
+                                            <!-- İptal Talebi Butonu -->
+                                            @if (item.Status != "İptal Edildi" && item.Status != "İptal Talebi Alındı" && item.Status != "Tamamlandı")
+                                            {
+                                                <a href="/Reservation/CancelRequest?id=@item.ReservationID&phone=@item.Phone" 
+                                                   onclick="return confirm('#REZ-@item.ReservationID numaralı rezervasyonunuz için iptal talebi oluşturmak istediğinize emin misiniz?');" 
+                                                   class="btn btn-outline-danger btn-sm" style="border-radius: 6px;">
+                                                    <i class="ion-ios-close-circle-outline mr-1"></i> İptal Talebinde Bulun
+                                                </a>
+                                            }
+                                            else if (item.Status == "İptal Talebi Alındı")
+                                            {
+                                                <span class="text-warning small font-weight-bold">
+                                                    <i class="ion-ios-time mr-1"></i> İptal Talebi İnceleniyor
+                                                </span>
+                                            }
+                                        </div>
+
+                                        <div class="row text-secondary small mb-2 mt-2">
+                                            <div class="col-sm-6 mb-1">
+                                                <strong><i class="ion-ios-person mr-1"></i>Müşteri:</strong> @item.Name @item.Surname
+                                            </div>
+                                            <div class="col-sm-6 mb-1">
+                                                <strong><i class="ion-ios-call mr-1"></i>Telefon:</strong> @item.Phone
+                                            </div>
+                                            <div class="col-sm-6 mb-1">
+                                                <strong><i class="ion-ios-pin mr-1"></i>Alış Ofisi:</strong> @item.PickUpLocationName
+                                            </div>
+                                            <div class="col-sm-6 mb-1">
+                                                <strong><i class="ion-ios-pin mr-1"></i>İade Ofisi:</strong> @item.DropOffLocationName
+                                            </div>
+                                        </div>
+
+                                        @if (!string.IsNullOrEmpty(item.Description))
+                                        {
+                                            <div class="p-2 bg-light rounded text-dark small mt-2">
+                                                <strong>Kiralama Detayı:</strong> @item.Description
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</section>
