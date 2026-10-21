@@ -36,14 +36,21 @@ namespace CarBook.WebUI.Controllers
         }
 
         [HttpPost]
-        public IActionResult Index(string book_pick_date, string book_off_date, string time_pick, string time_off, string locationID)
+        public IActionResult Index(string locationID, string dropOffLocationID, string pickDate, string offDate, string timePick, string book_pick_date, string book_off_date, string time_pick, string time_off)
         {
-            TempData["bookpickdate"] = book_pick_date;
-            TempData["bookoffdate"] = book_off_date;
-            TempData["timepick"] = time_pick;
-            TempData["timeoff"] = time_off;
+            var pDate = !string.IsNullOrEmpty(pickDate) ? pickDate : book_pick_date;
+            var oDate = !string.IsNullOrEmpty(offDate) ? offDate : book_off_date;
+            var tPick = !string.IsNullOrEmpty(timePick) ? timePick : time_pick;
+            var tOff = !string.IsNullOrEmpty(time_off) ? time_off : "";
+
+            TempData["bookpickdate"] = pDate;
+            TempData["bookoffdate"] = oDate;
+            TempData["timepick"] = tPick;
+            TempData["timeoff"] = tOff;
             TempData["locationID"] = locationID;
-            return RedirectToAction("Index", "RentACarList");
+            TempData["dropOffLocationID"] = dropOffLocationID;
+
+            return RedirectToAction("Index", "RentACarList", new { id = locationID, locationID = locationID });
         }
     }
 }

@@ -1,10 +1,27 @@
-﻿@model List<GetByBlogIdTagCloudDto>
+@model List<GetByBlogIdTagCloudDto>
+
+<style>
+    .tagcloud span.tag-cloud-link {
+        text-transform: uppercase;
+        display: inline-block;
+        padding: 4px 10px;
+        margin-bottom: 7px;
+        margin-right: 4px;
+        border-radius: 4px;
+        color: #000000;
+        border: 1px solid #ccc;
+        font-size: 11px;
+        cursor: default;
+        pointer-events: none;
+        user-select: none;
+    }
+</style>
 
 <div class="tag-widget post-tag-container mb-5 mt-5">
     <div class="tagcloud">
-        @foreach(var item in Model)
+        @foreach (var item in Model)
         {
-        <a href="#" class="tag-cloud-link">@item.Title</a>
+            <span class="tag-cloud-link">@item.Title</span>
         }
     </div>
 </div>

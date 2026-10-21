@@ -18,14 +18,27 @@ namespace CarBook.WebUI.Controllers
             var loc = id ?? locationID;
             if (loc == null && TempData["locationID"] != null)
             {
-                int.TryParse(TempData["locationID"]?.ToString(), out var parsed);
-                loc = parsed;
+                if (int.TryParse(TempData["locationID"]?.ToString(), out var parsed))
+                {
+                    loc = parsed;
+                }
             }
+
+            TempData.Keep("bookpickdate");
+            TempData.Keep("bookoffdate");
+            TempData.Keep("timepick");
+            TempData.Keep("timeoff");
+            TempData.Keep("locationID");
+            TempData.Keep("dropOffLocationID");
 
             ViewBag.locationID = loc;
 
             var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"https://localhost:7046/api/RentACars?locationID={loc ?? 0}&available=true");
+            var apiUrl = loc.HasValue && loc.Value > 0
+                ? $"https://localhost:7046/api/RentACars?locationID={loc.Value}&available=true"
+                : $"https://localhost:7046/api/RentACars?locationID=0&available=true";
+
+            var responseMessage = await client.GetAsync(apiUrl);
             if (responseMessage.IsSuccessStatusCode)
             {
                 var jsonData = await responseMessage.Content.ReadAsStringAsync();
