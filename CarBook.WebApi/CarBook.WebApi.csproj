@@ -34,6 +34,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CarBook.Dto\CarBook.Dto.csproj" />
     <ProjectReference Include="..\CarBook.Interfaces\CarBook.Application.csproj" />
     <ProjectReference Include="..\CarBook.Persistence\CarBook.Persistence.csproj" />
   </ItemGroup>
