@@ -1,0 +1,133 @@
+@model CarBook.Dto.AppUserDtos.ResultAppUserDto
+@{
+    ViewData["Title"] = "Profilim";
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+<div class="page-content">
+    <div class="container-fluid">
+
+        <!-- Başlık & Breadcrumb -->
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box d-flex align-items-center justify-content-between pb-3">
+                    <h4 class="mb-0 font-size-18">Kullanıcı Profili</h4>
+                    <div class="page-title-right">
+                        <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item"><a href="/Admin/Dashboard/Index">CarBook</a></li>
+                            <li class="breadcrumb-item active">Profilim</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="mdi mdi-check-all mr-2"></i> @TempData["SuccessMessage"]
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="mdi mdi-block-helper mr-2"></i> @TempData["ErrorMessage"]
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        }
+
+        <div class="row">
+            <!-- Profil Kartı (Sol Taraf) -->
+            <div class="col-xl-4 col-lg-5">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body text-center p-4">
+                        <div class="avatar-lg mx-auto mb-3">
+                            <div class="avatar-title bg-soft-primary text-primary display-4 rounded-circle mx-auto d-flex align-items-center justify-content-center" style="width: 100px; height: 100px; background-color: #e3f2fd;">
+                                <i class="mdi mdi-account-circle" style="font-size: 75px; color: #1976d2;"></i>
+                            </div>
+                        </div>
+                        <h5 class="font-size-16 mb-1">@Model?.Name @Model?.Surname</h5>
+                        <p class="text-muted mb-2">@@@Model?.Username</p>
+                        <span class="badge badge-success px-3 py-1 font-size-12">@(Model?.RoleName ?? "Admin")</span>
+
+                        <hr class="my-4">
+
+                        <div class="text-left">
+                            <p class="text-muted mb-2 font-size-13">
+                                <strong><i class="mdi mdi-email-outline mr-2"></i>E-Posta:</strong>
+                                <span class="d-block mt-1 text-dark">@Model?.Email</span>
+                            </p>
+                            <p class="text-muted mb-2 font-size-13">
+                                <strong><i class="mdi mdi-shield-account-outline mr-2"></i>Yetki:</strong>
+                                <span class="d-block mt-1 text-dark">@(Model?.RoleName ?? "Sistem Yöneticisi")</span>
+                            </p>
+                            <p class="text-muted mb-0 font-size-13">
+                                <strong><i class="mdi mdi-calendar-check mr-2"></i>Hesap Durumu:</strong>
+                                <span class="d-block mt-1 text-success font-weight-bold">Aktif Kullanıcı</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profil Düzenleme Formu (Sağ Taraf) -->
+            <div class="col-xl-8 col-lg-7">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body p-4">
+                        <h4 class="card-title mb-4">
+                            <i class="mdi mdi-account-edit mr-2 text-primary"></i>Profil Bilgilerini Güncelle
+                        </h4>
+
+                        <form method="post" action="/Admin/Profile/Index">
+                            <input type="hidden" name="AppUserId" value="@Model?.AppUserId" />
+
+                            <div class="row">
+                                <div class="col-md-6 form-group">
+                                    <label class="font-weight-bold">Ad</label>
+                                    <input type="text" class="form-control" name="Name" value="@Model?.Name" required placeholder="Adınızı giriniz" />
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <label class="font-weight-bold">Soyad</label>
+                                    <input type="text" class="form-control" name="Surname" value="@Model?.Surname" required placeholder="Soyadınızı giriniz" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 form-group">
+                                    <label class="font-weight-bold">Kullanıcı Adı</label>
+                                    <input type="text" class="form-control" name="Username" value="@Model?.Username" required placeholder="Kullanıcı adınızı giriniz" />
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <label class="font-weight-bold">E-Posta Adresi</label>
+                                    <input type="email" class="form-control" name="Email" value="@Model?.Email" required placeholder="ornek@carbook.com" />
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="font-weight-bold">Yeni Şifre</label>
+                                <input type="password" class="form-control" name="Password" placeholder="Şifrenizi değiştirmek istemiyorsanız boş bırakınız" autocomplete="new-password" />
+                                <small class="form-text text-muted">Şifrenizi güncellemek istiyorsanız yeni bir şifre girin. Boş bırakırsanız mevcut şifreniz korunur.</small>
+                            </div>
+
+                            <div class="mt-4 text-right">
+                                <a href="/Admin/Dashboard/Index" class="btn btn-secondary mr-2">
+                                    <i class="mdi mdi-arrow-left mr-1"></i> İptal
+                                </a>
+                                <button type="submit" class="btn btn-primary px-4">
+                                    <i class="mdi mdi-content-save mr-1"></i> Bilgileri Kaydet
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
