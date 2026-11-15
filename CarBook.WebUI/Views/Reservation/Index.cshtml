@@ -85,7 +85,7 @@
             </div>
             <div class="col-md-6 form-group">
                 <label class="font-weight-bold">Teslim Lokasyonu</label>
-                @Html.DropDownListFor(x=>x.DropOffLocationID, (List<SelectListItem>)ViewBag.v, "Teslim Edilecek Lokasyonu Seçiniz", new { @class="form-control", @id="ddlDropOff", @required = "required" })
+                @Html.DropDownListFor(x=>x.DropOffLocationID, (List<SelectListItem>)(ViewBag.dropOffValues ?? ViewBag.v), "Teslim Edilecek Lokasyonu Seçiniz", new { @class="form-control", @id="ddlDropOff", @required = "required" })
             </div>
         </div>
 
@@ -234,6 +234,15 @@
             pickDateInput.addEventListener("change", calculatePricing);
             dropDateInput.addEventListener("change", calculatePricing);
             calculatePricing();
+        }
+
+        var preselectedPick = "@(ViewBag.PickUpLocationID?.ToString() ?? "")";
+        var preselectedDrop = "@(ViewBag.DropOffLocationID?.ToString() ?? "")";
+        if (preselectedPick && document.getElementById("ddlPickUp")) {
+            document.getElementById("ddlPickUp").value = preselectedPick;
+        }
+        if (preselectedDrop && document.getElementById("ddlDropOff")) {
+            document.getElementById("ddlDropOff").value = dropLocVal = preselectedDrop;
         }
 
         // Onay Modalı Tetikleme

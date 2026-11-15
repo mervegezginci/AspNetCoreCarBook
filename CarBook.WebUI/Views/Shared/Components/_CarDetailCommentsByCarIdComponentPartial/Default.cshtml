@@ -1,9 +1,24 @@
 @model List<CarBook.Dto.ReviewDtos.ResultReviewByCarIdDto>
 
+@{
+	int totalReviews = Model != null ? Model.Count : 0;
+	int star5 = Model != null ? Model.Count(x => x.RaytingValue == 5) : 0;
+	int star4 = Model != null ? Model.Count(x => x.RaytingValue == 4) : 0;
+	int star3 = Model != null ? Model.Count(x => x.RaytingValue == 3) : 0;
+	int star2 = Model != null ? Model.Count(x => x.RaytingValue == 2) : 0;
+	int star1 = Model != null ? Model.Count(x => x.RaytingValue == 1) : 0;
+
+	int pct5 = totalReviews > 0 ? (int)Math.Round((double)star5 * 100 / totalReviews) : 0;
+	int pct4 = totalReviews > 0 ? (int)Math.Round((double)star4 * 100 / totalReviews) : 0;
+	int pct3 = totalReviews > 0 ? (int)Math.Round((double)star3 * 100 / totalReviews) : 0;
+	int pct2 = totalReviews > 0 ? (int)Math.Round((double)star2 * 100 / totalReviews) : 0;
+	int pct1 = totalReviews > 0 ? (int)Math.Round((double)star1 * 100 / totalReviews) : 0;
+}
+
 <div class="tab-pane fade" id="pills-review" role="tabpanel" aria-labelledby="pills-review-tab">
 	<div class="row">
 		<div class="col-md-7">
-			<h3 class="head">@(Model != null ? Model.Count : 0) Değerlendirme</h3>
+			<h3 class="head">@totalReviews Değerlendirme</h3>
 			@if (Model != null && Model.Any())
 			{
 				@foreach (var item in Model)
@@ -44,9 +59,9 @@
 							<i class="ion-ios-star"></i>
 							<i class="ion-ios-star"></i>
 							<i class="ion-ios-star"></i>
-							(98%)
+							(@(pct5)%)
 						</span>
-						<span>20 Reviews</span>
+						<span>@star5 Değerlendirme</span>
 					</p>
 					<p class="star">
 						<span>
@@ -54,37 +69,33 @@
 							<i class="ion-ios-star"></i>
 							<i class="ion-ios-star"></i>
 							<i class="ion-ios-star"></i>
-
-							(85%)
+							(@(pct4)%)
 						</span>
-						<span>10 Reviews</span>
+						<span>@star4 Değerlendirme</span>
 					</p>
 					<p class="star">
 						<span>
 							<i class="ion-ios-star"></i>
 							<i class="ion-ios-star"></i>
 							<i class="ion-ios-star"></i>
-				
-							(70%)
+							(@(pct3)%)
 						</span>
-						<span>5 Reviews</span>
+						<span>@star3 Değerlendirme</span>
 					</p>
 					<p class="star">
 						<span>
 							<i class="ion-ios-star"></i>
 							<i class="ion-ios-star"></i>
-					
-							(10%)
+							(@(pct2)%)
 						</span>
-						<span>0 Reviews</span>
+						<span>@star2 Değerlendirme</span>
 					</p>
 					<p class="star">
 						<span>
 							<i class="ion-ios-star"></i>
-					
-							(0%)
+							(@(pct1)%)
 						</span>
-						<span>0 Reviews</span>
+						<span>@star1 Değerlendirme</span>
 					</p>
 				</div>
 			</div>

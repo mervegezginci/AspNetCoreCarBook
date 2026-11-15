@@ -1,12 +1,52 @@
 @model List<CarBook.Dto.RentACarDtos.FilterRentACarDto>
 
 @{
-    ViewData["Title"] = "Müsait Araçlar";
+    ViewData["Title"] = ViewBag.v2 ?? "Müsait Araçlar";
     Layout = "~/Views/UILayout/Index.cshtml";
 }
 
 <section class="ftco-section bg-light">
     <div class="container">
+        @{
+            var locTitle = !string.IsNullOrEmpty(ViewBag.locationName as string) 
+                ? ViewBag.locationName as string 
+                : (!string.IsNullOrEmpty(ViewBag.v2 as string) && ViewBag.v2 != "Müsait Araçlar" && ViewBag.v2 != "Aracınızı Seçiniz" ? ViewBag.v2 as string : null);
+            var dropTitle = ViewBag.dropOffLocationName as string;
+        }
+
+        @if (!string.IsNullOrEmpty(locTitle) && !string.IsNullOrEmpty(dropTitle))
+        {
+            <div class="row justify-content-center mb-4">
+                <div class="col-md-12 heading-section text-center">
+                    <span class="subheading" style="color: #1089ff; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; font-size: 12px;">Alış ve Teslim Lokasyonu</span>
+                    <h3 class="mb-2 mt-1" style="font-weight: 600; color: #2c3e50; font-size: 22px;">
+                        @locTitle <span class="mx-2" style="color: #1089ff; font-weight: bold;">&rarr;</span> @dropTitle
+                    </h3>
+                    <p class="text-muted mb-0" style="font-size: 13px;">@locTitle alış ve @dropTitle teslim için müsait kiralık araçlar listelenmektedir.</p>
+                </div>
+            </div>
+        }
+        else if (!string.IsNullOrEmpty(locTitle))
+        {
+            <div class="row justify-content-center mb-4">
+                <div class="col-md-12 heading-section text-center">
+                    <span class="subheading" style="color: #1089ff; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; font-size: 12px;">Alış Lokasyonu</span>
+                    <h3 class="mb-2 mt-1" style="font-weight: 600; color: #2c3e50; font-size: 22px;">@locTitle</h3>
+                    <p class="text-muted mb-0" style="font-size: 13px;">Seçtiğiniz lokasyona ait müsait kiralık araçlar listelenmektedir.</p>
+                </div>
+            </div>
+        }
+        else if (!string.IsNullOrEmpty(dropTitle))
+        {
+            <div class="row justify-content-center mb-4">
+                <div class="col-md-12 heading-section text-center">
+                    <span class="subheading" style="color: #1089ff; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; font-size: 12px;">Teslim Lokasyonu</span>
+                    <h3 class="mb-2 mt-1" style="font-weight: 600; color: #2c3e50; font-size: 22px;">@dropTitle</h3>
+                    <p class="text-muted mb-0" style="font-size: 13px;">Seçtiğiniz teslim lokasyonuna ait müsait kiralık araçlar listelenmektedir.</p>
+                </div>
+            </div>
+        }
+
         <div class="row">
             @if (Model != null && Model.Any())
             {
@@ -22,7 +62,7 @@
                                     <span class="cat">@item.Brand</span>
                                 </div>
                                 <p class="d-flex mb-0 d-block">
-                                    <a href="/Reservation/Index/@item.carID" class="btn btn-primary py-2 mr-1">Hemen Kirala</a> 
+                                    <a href="/Reservation/Index/@item.carID?locationID=@ViewBag.locationID&dropOffLocationID=@ViewBag.dropOffLocationID" class="btn btn-primary py-2 mr-1">Hemen Kirala</a> 
                                     <a href="/Car/CarDetail/@item.carID" class="btn btn-secondary py-2 ml-1">Detaylar</a>
                                 </p>
                             </div>
@@ -34,7 +74,7 @@
             {
                 <div class="col-md-12 text-center py-5">
                     <div class="alert alert-warning">
-                        <h4>Seçilen lokasyonda şu anda müsait kiralık araç bulunamadı.</h4>
+                        <h4>@(ViewBag.locationName != null ? $"{ViewBag.locationName} lokasyonunda" : "Seçilen lokasyonda") şu anda müsait kiralık araç bulunamadı.</h4>
                         <p class="mb-0">Lütfen farklı bir lokasyon veya tarih aralığı deneyiniz.</p>
                         <a href="/Default/Index" class="btn btn-primary mt-3">Ana Sayfaya Dön</a>
                     </div>

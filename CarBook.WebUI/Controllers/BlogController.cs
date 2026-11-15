@@ -1,6 +1,8 @@
-﻿using CarBook.Dto.BlogDtos;
+using CarBook.Dto.BlogDtos;
+using CarBook.Dto.CommentDtos;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Text;
 
 namespace CarBook.WebUI.Controllers
 {
@@ -42,6 +44,39 @@ namespace CarBook.WebUI.Controllers
             ViewBag.v2 = "Blog Detayı ve Yorumlar";
             ViewBag.blogid = id;
             return View();
+        }
+
+        [HttpGet]
+        public IActionResult AddComment(int? id)
+        {
+            if (id.HasValue && id.Value > 0)
+            {
+                return RedirectToAction("BlogDetail", new { id = id.Value });
+            }
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddComment(CreateCommentDto createCommentDto, string? Comment)
+        {
+            if (string.IsNullOrEmpty(createCommentDto.Description) && !string.IsNullOrEmpty(Comment))
+            {
+                createCommentDto.Description = Comment;
+            }
+
+            createCommentDto.CreatedDate = DateTime.Now;
+
+            var client = _httpClientFactory.CreateClient();
+            var jsonData = JsonConvert.SerializeObject(createCommentDto);
+            StringContent stringContent = new StringContent(jsonData, Encoding.UTF8, "application/json");
+
+            var responseMessage = await client.PostAsync("https://localhost:7046/api/Comments/CreateCommentWithMediator", stringContent);
+            if (!responseMessage.IsSuccessStatusCode)
+            {
+                await client.PostAsync("https://localhost:7046/api/Comments", stringContent);
+            }
+
+            return RedirectToAction("BlogDetail", "Blog", new { id = createCommentDto.BlogID });
         }
 
     }

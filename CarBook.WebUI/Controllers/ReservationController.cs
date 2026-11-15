@@ -19,11 +19,39 @@ namespace CarBook.WebUI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(int id)
+        public async Task<IActionResult> Index(int id, int? locationID, int? dropOffLocationID)
         {
             ViewBag.v1 = "Araç Kiralama";
             ViewBag.v2 = "Araç Rezervasyon Formu";
             ViewBag.v3 = id;
+
+            var pickLoc = locationID;
+            if (pickLoc == null && TempData["locationID"] != null)
+            {
+                if (int.TryParse(TempData["locationID"]?.ToString(), out var parsedPick))
+                {
+                    pickLoc = parsedPick;
+                }
+            }
+
+            var dropLoc = dropOffLocationID;
+            if (dropLoc == null && TempData["dropOffLocationID"] != null)
+            {
+                if (int.TryParse(TempData["dropOffLocationID"]?.ToString(), out var parsedDrop))
+                {
+                    dropLoc = parsedDrop;
+                }
+            }
+
+            TempData.Keep("bookpickdate");
+            TempData.Keep("bookoffdate");
+            TempData.Keep("timepick");
+            TempData.Keep("timeoff");
+            TempData.Keep("locationID");
+            TempData.Keep("dropOffLocationID");
+
+            ViewBag.PickUpLocationID = pickLoc;
+            ViewBag.DropOffLocationID = dropLoc;
 
             var client = _httpClientFactory.CreateClient();
 
@@ -96,8 +124,22 @@ namespace CarBook.WebUI.Controllers
             }
 
             ViewBag.DailyPrice = dailyPrice;
-            ViewBag.PickDate = TempData["bookpickdate"]?.ToString() ?? "";
-            ViewBag.DropDate = TempData["bookoffdate"]?.ToString() ?? "";
+
+            string rawPickDate = TempData["bookpickdate"]?.ToString() ?? "";
+            string rawDropDate = TempData["bookoffdate"]?.ToString() ?? "";
+
+            string FormatDateForInput(string? dateStr)
+            {
+                if (string.IsNullOrWhiteSpace(dateStr)) return "";
+                if (DateTime.TryParse(dateStr, out var dt))
+                {
+                    return dt.ToString("yyyy-MM-dd");
+                }
+                return dateStr;
+            }
+
+            ViewBag.PickDate = FormatDateForInput(rawPickDate);
+            ViewBag.DropDate = FormatDateForInput(rawDropDate);
 
             // Lokasyonları Çek
             try
@@ -111,21 +153,41 @@ namespace CarBook.WebUI.Controllers
                                                     select new SelectListItem
                                                     {
                                                         Text = x.Name,
-                                                        Value = x.LocationID.ToString()
+                                                        Value = x.LocationID.ToString(),
+                                                        Selected = pickLoc.HasValue && x.LocationID == pickLoc.Value
                                                     }).ToList();
+
+                    List<SelectListItem> dropValues = (from x in values
+                                                       select new SelectListItem
+                                                       {
+                                                           Text = x.Name,
+                                                           Value = x.LocationID.ToString(),
+                                                           Selected = dropLoc.HasValue && x.LocationID == dropLoc.Value
+                                                       }).ToList();
+
                     ViewBag.v = values2;
+                    ViewBag.dropOffValues = dropValues;
                 }
                 else
                 {
                     ViewBag.v = new List<SelectListItem>();
+                    ViewBag.dropOffValues = new List<SelectListItem>();
                 }
             }
             catch
             {
                 ViewBag.v = new List<SelectListItem>();
+                ViewBag.dropOffValues = new List<SelectListItem>();
             }
 
-            return View();
+            var model = new CreateReservationDto
+            {
+                CarID = id,
+                PickUpLocationID = pickLoc ?? 0,
+                DropOffLocationID = dropLoc ?? 0
+            };
+
+            return View(model);
         }
 
         [HttpPost]

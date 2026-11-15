@@ -20,17 +20,21 @@
                     </p>
 
                     <ul class="ftco-footer-social list-unstyled float-md-left float-lft mt-5">
-                        <li class="ftco-animate">
-                            <a href="#"><span class="icon-twitter"></span></a>
-                        </li>
+                        @if (ViewBag.SocialMedias != null && ((List<CarBook.Dto.SocialMediaDtos.ResultSocialMediaDto>)ViewBag.SocialMedias).Any())
+                        {
+                            foreach (var item in (List<CarBook.Dto.SocialMediaDtos.ResultSocialMediaDto>)ViewBag.SocialMedias)
+                            {
+                                string iconClass = item.Icon ?? "";
+                                if (!string.IsNullOrEmpty(iconClass) && !iconClass.StartsWith("icon-") && !iconClass.StartsWith("fa"))
+                                {
+                                    iconClass = "icon-" + iconClass;
+                                }
 
-                        <li class="ftco-animate">
-                            <a href="#"><span class="icon-facebook"></span></a>
-                        </li>
-
-                        <li class="ftco-animate">
-                            <a href="#"><span class="icon-instagram"></span></a>
-                        </li>
+                                <li class="ftco-animate">
+                                    <a href="@item.Url" target="_blank" title="@item.Name"><span class="@iconClass"></span></a>
+                                </li>
+                            }
+                        }
                     </ul>
 
                 </div>

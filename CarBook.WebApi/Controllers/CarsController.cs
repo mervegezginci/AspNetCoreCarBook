@@ -40,6 +40,7 @@ namespace CarBook.WebApi.Controllers
         public async Task<IActionResult> GetCar(int id)
         {
             var value = await _getCarByIdQueryHandler.Handle(new GetCarByIdQuery(id));
+            if (value == null) return NotFound("Araç bulunamadı.");
             return Ok(value);
         }
 
@@ -79,3 +80,5 @@ namespace CarBook.WebApi.Controllers
         }
     }
 }
+
+

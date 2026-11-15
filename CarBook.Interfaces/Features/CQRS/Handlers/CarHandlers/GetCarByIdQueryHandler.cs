@@ -1,4 +1,4 @@
-using CarBook.Application.Features.CQRS.Queries.CarQueries;
+﻿using CarBook.Application.Features.CQRS.Queries.CarQueries;
 using CarBook.Application.Features.CQRS.Results.CarResults;
 using CarBook.Application.Interfaces;
 using CarBook.Domain.Entities;
@@ -18,6 +18,7 @@ namespace CarBook.Application.Features.CQRS.Handlers.CarHandlers
         public async Task<GetCarByIdQueryResult> Handle(GetCarByIdQuery query)
         {
             var values = await _repository.GetByIdAsync(query.Id);
+            if (values == null) return null;
             return new GetCarByIdQueryResult
             {
                 BrandID = values.BrandID,
@@ -34,3 +35,4 @@ namespace CarBook.Application.Features.CQRS.Handlers.CarHandlers
         }
     }
 }
+

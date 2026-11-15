@@ -50,7 +50,7 @@ namespace CarBook.WebUI.Controllers
             TempData["locationID"] = locationID;
             TempData["dropOffLocationID"] = dropOffLocationID;
 
-            return RedirectToAction("Index", "RentACarList", new { id = locationID, locationID = locationID });
+            return RedirectToAction("Index", "RentACarList", new { id = locationID, locationID = locationID, dropOffLocationID = dropOffLocationID });
         }
     }
 }

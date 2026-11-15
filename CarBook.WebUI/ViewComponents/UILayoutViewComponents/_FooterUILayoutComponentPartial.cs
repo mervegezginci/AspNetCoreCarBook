@@ -1,4 +1,5 @@
-﻿using CarBook.Dto.FooterAddressDtos;
+using CarBook.Dto.FooterAddressDtos;
+using CarBook.Dto.SocialMediaDtos;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -18,22 +19,42 @@ namespace CarBook.WebUI.ViewComponents.UILayoutViewComponents
         {
             var client = _httpClientFactory.CreateClient();
 
-            var responseMessage = await client.GetAsync(
-                "https://localhost:7046/api/FooterAddresses"
-            );
+            ResultFooterAddressDto? footerAddress = null;
 
-            if (responseMessage.IsSuccessStatusCode)
+            // FooterAddress Çek
+            try
             {
-                var jsonData =
-                    await responseMessage.Content.ReadAsStringAsync();
+                var responseMessage = await client.GetAsync("https://localhost:7046/api/FooterAddresses");
+                if (responseMessage.IsSuccessStatusCode)
+                {
+                    var jsonData = await responseMessage.Content.ReadAsStringAsync();
+                    var values = JsonConvert.DeserializeObject<List<ResultFooterAddressDto>>(jsonData);
+                    footerAddress = values?.FirstOrDefault();
+                }
+            }
+            catch { }
 
-                var values =
-                    JsonConvert.DeserializeObject<List<ResultFooterAddressDto>>(jsonData);
-
-                return View(values.FirstOrDefault());
+            // SocialMedias Çek
+            try
+            {
+                var socialResponse = await client.GetAsync("https://localhost:7046/api/SocialMedias");
+                if (socialResponse.IsSuccessStatusCode)
+                {
+                    var socialJson = await socialResponse.Content.ReadAsStringAsync();
+                    var socialValues = JsonConvert.DeserializeObject<List<ResultSocialMediaDto>>(socialJson);
+                    ViewBag.SocialMedias = socialValues ?? new List<ResultSocialMediaDto>();
+                }
+                else
+                {
+                    ViewBag.SocialMedias = new List<ResultSocialMediaDto>();
+                }
+            }
+            catch
+            {
+                ViewBag.SocialMedias = new List<ResultSocialMediaDto>();
             }
 
-            return View();
+            return View(footerAddress ?? new ResultFooterAddressDto());
         }
     }
 }
