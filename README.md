@@ -69,6 +69,7 @@ CarBook/
 
 ## 📸 Ekran Görüntüleri
 
+
 ### 🌟 Öne Çıkan Özellikler (Rezervasyon & Anlık Bildirimler)
 
 | Dinamik Rezervasyon Onay Modalı | Rezervasyonlarım & Durum Takip |
