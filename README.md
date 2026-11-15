@@ -60,51 +60,43 @@ CarBook/
 
 ---
 
-## ⚙️ Kurulum ve Çalıştırma
-
 ### Gereksinimler
 - [.NET 10.0 SDK](https://dotnet.microsoft.com/download)
 - [MS SQL Server](https://www.microsoft.com/sql-server/) veya LocalDB
 - [Visual Studio 2022 / Visual Studio Code](https://visualstudio.microsoft.com/)
 
-### Adımlar
-
-1. **Projeyi Klonlayın:**
-   ```bash
-   git clone https://github.com/KULLANICI_ADINIZ/CarBook.git
-   cd CarBook
-   ```
-
-2. **Veritabanı Bağlantı Cümlesini Ayarlayın:**
-   `CarBook.WebApi/appsettings.json` ve `CarBook.Persistence` içerisindeki connection string alanını kendi SQL Server bilgilerinize göre güncelleyin:
-   ```json
-   "ConnectionStrings": {
-     "DefaultConnection": "Server=YOUR_SERVER_NAME;Database=CarBookDb;Trusted_Connection=True;TrustServerCertificate=True;"
-   }
-   ```
-
-3. **Veritabanını Oluşturun (Migration Update):**
-   Package Manager Console veya Terminal üzerinden veritabanını güncelleyin:
-   ```bash
-   dotnet ef database update --project CarBook.Persistence --startup-project CarBook.WebApi
-   ```
-
-4. **Uygulamayı Çalıştırın:**
-   Visual Studio üzerinden `CarBook.WebApi` ve `CarBook.WebUI` projelerini aynı anda (Multiple Startup Projects / `slnLaunch.user`) başlatın veya terminalde:
-
-   **WebApi'yi Başlatın:**
-   ```bash
-   dotnet run --project CarBook.WebApi
-   ```
-
-   **WebUI'yi Başlatın:**
-   ```bash
-   dotnet run --project CarBook.WebUI
-   ```
-
 ---
 
 ## 📸 Ekran Görüntüleri
 
-> *(Buraya proje tamamlandıkça kullanıcı arayüzü ve Admin panelinden ekran görüntüleri eklenecek)*
+
+### 🌟 Öne Çıkan Özellikler (Rezervasyon & Anlık Bildirimler)
+
+| Dinamik Rezervasyon Onay Modalı | Rezervasyonlarım & Durum Takip |
+|:---:|:---:|
+| ![Rezervasyon Onayı](Screenshots/08_Reservation_Modal.png) | ![Rezervasyonlarım](Screenshots/09_MyReservations.png) |
+
+| SignalR Anlık Bildirim Akışı |
+|:---:|
+| ![SignalR Bildirim](Screenshots/10_SignalR_Notification.png) |
+
+---
+
+### 🌐 Kullanıcı Arayüzü (WebUI)
+
+| Anasayfa & Araç Filtreleme Alanı | Geniş Araç Filosu & Kartlar |
+|:---:|:---:|
+| ![Anasayfa](Screenshots/01_HomePage.png) | ![Araçlarımız](Screenshots/02_CarList.png) |
+
+| Fiyat Paketleri & Karşılaştırma | Blog & Sektörel İçerikler |
+|:---:|:---:|
+| ![Fiyatlandırma](Screenshots/03_Pricing.png) | ![Blog Listesi](Screenshots/04_BlogList.png) |
+
+| Detaylı Blog Yazısı & Yazar Bilgisi | Hakkımızda Sayfası |
+|:---:|:---:|
+| ![Blog Detay](Screenshots/05_BlogDetail.png) | ![Hakkımızda](Screenshots/06_About.png) |
+
+| İletişim Formu & Lokasyon Bilgileri |
+|:---:|
+| ![İletişim](Screenshots/07_Contact.png) |
 
